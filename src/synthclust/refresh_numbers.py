@@ -69,12 +69,16 @@ def main():
     t = MAIN.read_text()
 
     # (pattern, replacement, label). Patterns are literal so a miss is visible.
+    #
+    # ORDER MATTERS: the compound arithmetic string contains the bare pair count,
+    # so it must be rewritten BEFORE the standalone pair-count substitution --
+    # otherwise that rewrite destroys the compound pattern and it reports MISSING.
     subs = [
-        (r"72{,}000", tex_int(v["pairs"]), "pair count"),
-        (r"$m = 100$", f"$m = {v['m']}$", "m in Data generation"),
-        (r"144 \times 5 \times 100 = 72{,}000",
+        (rf"144 \times {v['n']} \times 100 = 72{{,}}000",
          rf"144 \times {v['n']} \times {v['m']} = {tex_int(v['pairs'])}",
          "design arithmetic"),
+        (r"72{,}000", tex_int(v["pairs"]), "pair count"),
+        (r"$m = 100$", f"$m = {v['m']}$", "m in Data generation"),
     ]
     report = []
     for old, new, label in subs:

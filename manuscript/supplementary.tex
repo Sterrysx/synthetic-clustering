@@ -59,13 +59,13 @@ compares the two estimates with each other and so isolates the effect of
 synthesis from the difficulty of the clustering problem itself.
 
 The pattern confirms the expectation that at high separation the mass
-concentrates on the diagonal: exact agreement rises from $68.2\%$ at
-$\sigma = 0.1$ to $98.3\%$ at $\sigma = 10$ for $k$-means (Ward: $64.9\%$ to
-$97.7\%$). In the overlapping regime the off-diagonal mass is not symmetric.
+concentrates on the diagonal: exact agreement rises from $68.4\%$ at
+$\sigma = 0.1$ to $98.2\%$ at $\sigma = 10$ for $k$-means (Ward: $64.6\%$ to
+$97.5\%$). In the overlapping regime the off-diagonal mass is not symmetric.
 At $\sigma = 0.1$ the synthetic data yield a \emph{lower} estimate than the
-original in $15.5\%$ of comparisons and a higher one in $17.1\%$; the largest
+original in $15.2\%$ of comparisons and a higher one in $16.4\%$; the largest
 single off-diagonal cell is the original data supporting $\hat{k} \ge 5$ while
-the synthetic data support $\hat{k} = 2$ ($8.2\%$). That is, when the original
+the synthetic data support $\hat{k} = 2$ ($8.4\%$). That is, when the original
 data contain weak, diffuse structure that the silhouette criterion resolves
 into many small groups, CART synthesis tends to smooth it away into a single
 coarse split. The tendency disappears once the groups are genuinely separated.
@@ -82,7 +82,7 @@ coarse split. The tendency disappears once the groups are genuinely separated.
   narrower per-scenario range used for the recovery rates in the main text,
   agreement at $\sigma = 0.1$ is higher ($75.0\%$ for $k$-means, $68.0\%$ for
   Ward) while the remaining levels change by less than half a percentage point.
-  $n = 18{,}000$ comparisons per separation level.}
+  $n = 180{,}000$ comparisons per separation level.}
 \label{tabS:khat}
 \small
 \input{supp_table.tex}
