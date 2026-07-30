@@ -101,9 +101,52 @@ def main():
             xs = " ".join(f"{x:.3f}" for x in v[f"{lab}_{a}_by_sep"])
             print(f"  {lab:>4} {a} by sep: {xs}")
 
+    # Residual scan. The literal substitutions above only catch the phrasings we
+    # anticipated; `m` is also stated in prose (e.g. a table caption reading
+    # "with n=5 original replicates and m=100 synthetic draws each"), which no
+    # exact-string rule matched and which therefore survived a full refresh while
+    # contradicting the sentence above it. Scan for any stale value that remains,
+    # and verify every stated product equals its stated result.
+    # `\sum_{m=1}^{M}` is a summation index, not the design parameter: require a
+    # `$` before the m so only inline-math statements of the parameter match.
+    stale = []
+    for pat, label in [(rf"\$m\s*=\s*(?!{v['m']}\b)\d+", "m set to something other than config"),
+                       (r"\b\d+ (?:synthetic draws|CART draws)", "draw count in prose"),
+                       (r"72\{,\}000", "old pair count")]:
+        for mm in re.finditer(pat, t):
+            line = t[:mm.start()].count("\n") + 1
+            frag = mm.group(0)
+            if label.startswith("draw") and f"{v['m']} " in frag:
+                continue
+            if label.startswith("m set") and f"= {v['m']}" in frag:
+                continue
+            stale.append((line, label, frag))
+
+    bad_arith = []
+    for mm in re.finditer(r"((?:\d+\s*\\times\s*)+\d+)\s*=\s*([\d{},]+)", t):
+        factors = [int(x) for x in re.findall(r"\d+", mm.group(1))]
+        stated = int(mm.group(2).replace("{,}", "").replace(",", ""))
+        prod = 1
+        for f in factors:
+            prod *= f
+        if prod != stated:
+            bad_arith.append((t[:mm.start()].count("\n") + 1, factors, prod, stated))
+
+    print("\nresidual scan:")
+    if not stale and not bad_arith:
+        print("  clean: no stale m/pair values, all stated products check out")
+    for line, label, frag in stale:
+        print(f"  STALE line {line}: {label}: {frag!r}")
+    for line, factors, prod, stated in bad_arith:
+        print(f"  ARITHMETIC line {line}: {factors} = {prod}, document says {stated}")
+
     if args.write:
         MAIN.write_text(t)
         print(f"\nwrote {MAIN}")
+        if stale or bad_arith:
+            raise SystemExit(
+                "wrote the file, but the residual scan found values the literal "
+                "substitutions could not reach. Fix those by hand and re-run.")
     else:
         print("\n(dry run; pass --write to apply)")
 
