@@ -1,0 +1,91 @@
+% Supplementary material. Same fallback note as main.tex: swap the two marked
+% lines for \documentclass[sn-mathphys-num]{sn-jnl} when sn-jnl.cls is available.
+\documentclass[pdflatex,sn-basic]{sn-jnl}
+\pdfmapfile{=local.map}          %% build-machine workaround; delete elsewhere
+\usepackage{graphicx}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+
+\begin{document}
+
+\title{Supplementary Material\\
+       \large Does Synthetic Data Preserve Cluster Structure?
+       A Factorial Evaluation of Partitioning and Hierarchical
+       Clustering on {CART}-Generated Data}
+\author[1]{Oriol Farr\'es Vilar}
+\author[1,2]{Jordi Cort\'es}
+\author[2]{Daniel Fern\'andez}
+\affil[1]{Universitat Polit\`ecnica de Catalunya, Barcelona, Spain}
+\affil[2]{Universitat Polit\`ecnica de Catalunya, Barcelona, Spain}
+\abstract{Supporting figures and tables for the main article.}
+\maketitle
+
+\section{Recovery of the number of groups by cluster count and separation}
+
+Figure~\ref{figS:heatmap} presents the recovery rate of the true number of
+groups as a function of the true cluster count $k$ and the separation
+$\sigma$, for both algorithms. It carries the same information as Figure~3 of
+the main article in a different layout, making the $k \times \sigma$
+interaction directly legible: recovery collapses in the lower-left quadrant
+(many groups, little separation) and is essentially perfect in the upper-right.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{figures/figS_heatmap.pdf}
+\caption{Recovery rate of the true number of groups by true cluster count and
+  separation, for $k$-means (left) and Ward (right). Cell values are
+  proportions over the full design.}
+\label{figS:heatmap}
+\end{figure}
+
+\section{Agreement in the estimated number of groups between original and
+         synthetic data}
+
+Table~\ref{tabS:khat} cross-tabulates the number of groups estimated from the
+original data against the number estimated from the corresponding synthetic
+data, stratified by separation. Unlike the recovery rate in the main article,
+which scores $\hat{k}$ against the construction-time ground truth, this table
+compares the two estimates with each other and so isolates the effect of
+synthesis from the difficulty of the clustering problem itself.
+
+The pattern confirms the expectation that at high separation the mass
+concentrates on the diagonal: exact agreement rises from $68.2\%$ at
+$\sigma = 0.1$ to $98.3\%$ at $\sigma = 10$ for $k$-means (Ward: $64.9\%$ to
+$97.7\%$). In the overlapping regime the off-diagonal mass is not symmetric.
+At $\sigma = 0.1$ the synthetic data yield a \emph{lower} estimate than the
+original in $15.5\%$ of comparisons and a higher one in $17.1\%$; the largest
+single off-diagonal cell is the original data supporting $\hat{k} \ge 5$ while
+the synthetic data support $\hat{k} = 2$ ($8.2\%$). That is, when the original
+data contain weak, diffuse structure that the silhouette criterion resolves
+into many small groups, CART synthesis tends to smooth it away into a single
+coarse split. The tendency disappears once the groups are genuinely separated.
+
+\begin{table}[h]
+\centering
+\caption{Agreement in the estimated number of groups between original and
+  synthetic data, by separation. Rows are $\hat{k}$ from the original data,
+  columns $\hat{k}$ from the synthetic data; cells are percentages of all
+  comparisons at that separation (each block sums to $100\%$). Estimates of
+  five or more groups are pooled for display, but the agreement column is
+  computed on unpooled values. Both data sources are searched over a fixed
+  range $\hat{k} \in \{2,\dots,8\}$, so the comparison is symmetric; under the
+  narrower per-scenario range used for the recovery rates in the main text,
+  agreement at $\sigma = 0.1$ is higher ($75.0\%$ for $k$-means, $68.0\%$ for
+  Ward) while the remaining levels change by less than half a percentage point.
+  $n = 18{,}000$ comparisons per separation level.}
+\label{tabS:khat}
+\small
+\input{supp_table.tex}
+\end{table}
+
+\end{document}

@@ -1,0 +1,27 @@
+# generated datasets (2.1 GB) -- regenerate with the R scripts.
+# No trailing slash: `data` is a symlink here, and `data/` matches directories only.
+data
+# LaTeX build products
+manuscript/*.aux
+manuscript/*.bbl
+manuscript/*.blg
+manuscript/*.log
+manuscript/*.out
+manuscript/*.build.log
+manuscript/missfont.log
+manuscript/texfmt/
+# derived results -- all regenerable by `make all`, and far too large to track:
+# clustering_results.csv alone is 199 MB, past GitHub's 100 MB hard limit.
+# The small khat_agreement*.csv summaries ARE kept.
+results/*.parquet
+results/clustering_results.csv
+results/.partial_*/
+results/.design-m*
+# per-phase stage logs from scripts/pipeline.py
+results/logs/
+# python
+.venv/
+__pycache__/
+*.pyc
+.uv-cache/
+.pytest_cache/

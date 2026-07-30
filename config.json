@@ -1,0 +1,18 @@
+{
+  "simulation": {
+    "N": 1000,
+    "n": 5,
+    "m": 1000,
+    "random_seed_base": 16
+  },
+  "parameters": {
+    "p": [2, 5, 10],
+    "k": [2, 3, 4],
+    "separation": [0.1, 2, 6, 10],
+    "rho": [0.0, 0.4],
+    "distribution": [
+      { "name": "normal" },
+      { "name": "gamma", "shape": 1.5, "rate": 5.0 }
+    ]
+  }
+}
