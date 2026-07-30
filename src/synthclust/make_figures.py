@@ -78,7 +78,17 @@ def panel_grid(dist, fname, title):
     for j, (cname, lr, ls) in enumerate(cols):
         for i, (X, lab) in enumerate([(Xr, lr), (Xs, ls)]):
             ax = axes[i, j]
-            ax.scatter(X[:, 0], X[:, 1], c=cmap[lab], s=3.2, lw=0, alpha=0.75, rasterized=True)
+            # Bottom-left panel (synthetic "true groups") is drawn in a single
+            # neutral colour on purpose. The synthetic `group` column is a CART
+            # prediction of the label from the synthetic features, not a planted
+            # ground truth, so there is no bijective correspondence with the
+            # original groups; colouring it would present a model output as
+            # ground truth (reviewer request, Jordi p9).
+            if i == 1 and j == 0:
+                colours = "#1A1A1A"
+            else:
+                colours = cmap[lab]
+            ax.scatter(X[:, 0], X[:, 1], c=colours, s=3.2, lw=0, alpha=0.75, rasterized=True)
             ax.set_xticks([]); ax.set_yticks([])
             ax.margins(0.05)
             if i == 0:
@@ -125,32 +135,60 @@ def fig_fidelity_bands(d):
     plt.close(fig)
 
 
-def fig_recovery_curves(df):
-    """Former Fig 4, promoted to the single recovery figure."""
-    fig, ax = plt.subplots(figsize=(4.2, 3.0))
-    for kk, ls in zip([2, 3, 4], ["-", "--", ":"]):
-        for algo, col, name in [("kmeans", BLUE, "$k$-means"), ("hc", RED, "Ward")]:
-            g = df[df.k == kk].groupby("sep")[f"success_{algo}"].mean()
-            ax.plot(g.index, g.values, ls, color=col, lw=1.3, marker="o", ms=3)
-    ax.axvspan(0, 2, color=GREY, alpha=0.10, lw=0, zorder=0)
-    ax.set_xlabel("Cluster separation $\\sigma$", fontsize=8)
-    ax.set_ylabel("Cluster-count recovery rate", fontsize=8)
-    ax.set_xticks([0.1, 2, 6, 10]); ax.set_ylim(-0.02, 1.18)
-    ax.text(1.0, 1.10, "clusters overlap", fontsize=6.5, color=GREY, ha="center", va="center")
-    ax.tick_params(labelsize=7)
+def fig_recovery_curves(d):
+    """Cluster-count recovery under both reference conventions.
+
+    Reviewer request (Jordi and Dani, 2026-07-30): report both references in the
+    number-of-clusters section only.
+
+      (a) v1, agreement with the planted k of the simulation.
+      (b) v2, agreement with the k a clustering algorithm recovers from the
+          ORIGINAL data.
+
+    Both panels are computed from the fidelity table so the two conventions rest
+    on identical rows. v1 here reproduces `success_*` in clustering_results.parquet
+    to within 0.002; that file is not used, to keep the panels strictly paired.
+    """
+    n_pairs = len(d)
+    conv = [("khat_syn_{a}_capped", "k",
+             "(a) versus the planted number of groups"),
+            ("khat_syn_{a}_capped", "khat_real_{a}_capped",
+             "(b) versus the number recovered from the original data")]
+
+    fig, axes = plt.subplots(1, 2, figsize=(7.0, 3.0), sharey=True)
+    for ax, (syn_t, ref_t, title) in zip(axes, conv):
+        for kk, ls in zip([2, 3, 4], ["-", "--", ":"]):
+            sub = d[d.k == kk]
+            for a, col in [("km", BLUE), ("hc", RED)]:
+                ref = sub[ref_t.format(a=a)] if "{a}" in ref_t else sub[ref_t]
+                hit = (sub[syn_t.format(a=a)] == ref).astype(float)
+                g = hit.groupby(sub["sep"]).mean()
+                ax.plot(g.index, g.values, ls, color=col, lw=1.3, marker="o", ms=3)
+        ax.axvspan(0, 2, color=GREY, alpha=0.10, lw=0, zorder=0)
+        ax.set_xlabel("Cluster separation $\\sigma$", fontsize=8)
+        ax.set_xticks([0.1, 2, 6, 10])
+        ax.set_title(title, fontsize=8, loc="left")
+        ax.tick_params(labelsize=7)
+        ax.text(1.0, 1.10, "clusters overlap", fontsize=6.5, color=GREY,
+                ha="center", va="center")
+        for s in ("top", "right"):
+            ax.spines[s].set_visible(False)
+    axes[0].set_ylabel("Cluster-count agreement", fontsize=8)
+    axes[0].set_ylim(-0.02, 1.18)
+
     from matplotlib.lines import Line2D
     h = [Line2D([], [], color=BLUE, lw=1.3, label="$k$-means"),
          Line2D([], [], color=RED, lw=1.3, label="Ward"),
          Line2D([], [], color=GREY, lw=1.3, ls="-", label="$k=2$"),
          Line2D([], [], color=GREY, lw=1.3, ls="--", label="$k=3$"),
          Line2D([], [], color=GREY, lw=1.3, ls=":", label="$k=4$")]
-    ax.legend(handles=h, frameon=False, fontsize=6.8, loc="lower right", ncol=2)
-    for s in ("top", "right"):
-        ax.spines[s].set_visible(False)
+    axes[1].legend(handles=h, frameon=False, fontsize=6.8, loc="lower right",
+                   ncol=2)
     fig.tight_layout()
     fig.savefig(f"{OUT}/fig_recovery.pdf", bbox_inches="tight")
     fig.savefig(f"{OUT}/fig_recovery.png", dpi=400, bbox_inches="tight")
     plt.close(fig)
+    return n_pairs
 
 
 def fig_heatmap_supp(df):
@@ -242,7 +280,8 @@ def main():
     panel_grid("normal", "fig_normal.png", "Normal (spherical) components")
     panel_grid("gamma", "fig_gamma.pdf", "Gamma (right-skewed) components")
     panel_grid("gamma", "fig_gamma.png", "Gamma (right-skewed) components")
-    fig_recovery_curves(df)
+    n_pairs = fig_recovery_curves(d)   # both conventions, from the fidelity table
+    print(f"  fig_recovery: {n_pairs:,} pairs")
     fig_heatmap_supp(df)
     fig_fidelity_bands(d)
     fig_distribution(df)

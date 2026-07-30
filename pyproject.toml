@@ -25,6 +25,7 @@ make-figures      = "synthclust.make_figures:main"
 make-supp-table   = "synthclust.make_supp_table:main"
 convert-codec     = "synthclust.convert_codec:main"
 verify-data       = "synthclust.verify_data:main"
+refresh-numbers   = "synthclust.refresh_numbers:main"
 
 [build-system]
 requires = ["hatchling"]

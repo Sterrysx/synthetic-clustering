@@ -128,4 +128,21 @@ if (length(still)) {
   quit(status = 1)
 }
 
+# Record the exact software versions and the canonical R citation. The
+# manuscript has to state these (reviewer request), and citation() is the only
+# authoritative source for how to cite R itself.
+cat("\n--- versions for the manuscript ---\n")
+cat(sprintf("  %s\n", R.version.string))
+cat(sprintf("  platform  %s\n", R.version$platform))
+for (p in needed) {
+  if (!(p %in% still)) {
+    cat(sprintf("  %-10s %s\n", p,
+                as.character(packageVersion(p, lib.loc = .libPaths()))))
+  }
+}
+cat("\n--- how to cite R (from citation()) ---\n")
+print(utils::citation(), style = "text")
+cat("\n--- how to cite synthpop ---\n")
+if (!("synthpop" %in% still)) print(utils::citation("synthpop"), style = "text")
+
 cat("\nReady. Next:  Rscript R/generate_synthetic.R\n")

@@ -104,7 +104,10 @@ class Phase(NamedTuple):
 
 
 PHASES = [
-    Phase("Environment", "", [["Rscript", str(REPO / "R/setup.R")], [UV, "sync"]],
+    # --extra dev: a bare `uv sync` prunes anything outside the default
+    # dependency set, which uninstalled pytest on every run and broke `make test`.
+    Phase("Environment", "",
+          [["Rscript", str(REPO / "R/setup.R")], [UV, "sync", "--extra", "dev"]],
           None, lambda: 0, lambda: (REPO / ".venv").exists(), always=True),
     Phase("Original data", "files", [["Rscript", str(REPO / "R/generate_original.R")]],
           N_OD, lambda: _n(ORIGINAL_DIR), lambda: _n(ORIGINAL_DIR) >= N_OD),

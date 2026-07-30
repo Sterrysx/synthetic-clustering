@@ -10,6 +10,8 @@ manuscript/*.out
 manuscript/*.build.log
 manuscript/missfont.log
 manuscript/texfmt/
+manuscript/*.fdb_latexmk
+manuscript/*.fls
 # derived results -- all regenerable by `make all`, and far too large to track:
 # clustering_results.csv alone is 199 MB, past GitHub's 100 MB hard limit.
 # The small khat_agreement*.csv summaries ARE kept.
