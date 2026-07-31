@@ -43,12 +43,15 @@
 
 \author[1]{Oriol Farr\'es Vilar}
 \author[2]{Jordi Cort\'es}
+\author[3]{Xinnuo Chen}
 \author[2]{Daniel Fern\'andez}
 
 \affil[1]{Department of Computer Science,
           Universitat Polit\`ecnica de Catalunya, Barcelona, Spain}
 \affil[2]{Department of Statistics and Operations Research,
           Universitat Polit\`ecnica de Catalunya, Barcelona, Spain}
+\affil[3]{Department of Statistical Science,
+          University College London, London, United Kingdom}
 
 \abstract{Synthetic data is increasingly released as a privacy-preserving
 substitute for confidential data, but its value rests on whether an
@@ -866,97 +869,83 @@ corresponding height.
 \section{Computational complexity and cost}
 \label{app:complexity}
 
-This appendix states the cost of the study: the asymptotic complexity of each
-component, the resulting size of the executed design, and the measured runtime
-on the hardware used.
-
-\subsection*{Complexity of the components}
-
-Let $N$ be the sample size, $p$ the dimensionality, $k$ the number of groups and
-$I$ the number of Lloyd iterations to convergence.
-
-\emph{Synthesis.} Sequential CART synthesis fits one regression tree per
-variable, conditioning on the variables already synthesised. Building a tree on
-$N$ observations and $j$ predictors costs $O(j N \log N)$ with the usual
-sorted-split implementation, so synthesising all $p$ variables costs
-$\sum_{j=1}^{p} O(j N \log N) = O(p^{2} N \log N)$. Drawing the synthetic
-records from the fitted leaves is $O(pN)$ and is dominated by the fitting.
-
-\emph{Partitioning.} Lloyd's algorithm costs $O(I k N p)$ per initialisation,
-and we retain the best of ten, giving $O(10\, I k N p)$. It is linear in $N$.
-
-\emph{Hierarchical agglomeration.} Ward's linkage as implemented here requires
-the pairwise distance structure and performs $N-1$ merges, costing $O(N^{2} p)$
-time and $O(N^{2})$ memory. This term, quadratic in $N$, is what bounds the
-sample size the design can afford, not the number of scenarios.
-
-\emph{Model selection.} The number of groups is estimated by scanning
-$\hat{k} \in \{2,\dots,8\}$ and maximising the average silhouette width. The
-silhouette requires all pairwise distances, $O(N^{2} p)$, and the scan repeats
-this for each of the seven candidate values and both algorithms.
-
-\emph{Alignment.} Matching synthetic to original groups before computing the
-geometric metrics is a rectangular assignment problem, solved exactly with the
-Hungarian algorithm in $O(k^{3})$. With $k \le 4$ this is negligible.
-
-The binding term is therefore $O(N^{2} p)$, arising from Ward's linkage and from
-the silhouette, not from the number of design cells: doubling $N$ costs roughly
-four times as much, whereas doubling the number of scenarios costs twice.
-
-\subsection*{Size of the executed design}
-
-The design comprises $144$ scenarios, each replicated across $n = 5$ independent
-original datasets, each synthesised $m = 1000$ times: $144 \times 5 = 720$
-(scenario, replicate) units and $720{,}000$ original--synthetic pairs.
-
-Each unit fits the two algorithms on the original data over seven candidate
-values of $\hat{k}$ plus one fit at the true $k$, and repeats that for every
-synthetic draw. Writing $A = 2$ for the algorithms and $K = 7$ for the candidate
-values, the fidelity stage performs
-\begin{equation*}
-  720 \times A(K+1) \;+\; 720 \times 1000 \times A(K+1)
-  \;=\; 11{,}520 \;+\; 11{,}520{,}000 \;\approx\; 1.15 \times 10^{7}
-\end{equation*}
-clustering fits, of which $1.01 \times 10^{7}$ are accompanied by a silhouette
-evaluation. The partition of the original data is computed once per unit and
-reused across that unit's $1000$ draws; computing it per draw would have
-multiplied the original-side work by $1000$ for no change in result.
-
-\subsection*{Measured cost}
-
-All stages ran on a single workstation with an AMD Ryzen~9 9900X
-(12~physical cores, 24~hardware threads) and $46$~GiB of memory, under Linux.
-The stages are embarrassingly parallel over units, and each was distributed
-across $18$ worker processes.
+\noindent
+Let $N$ be the sample size, $p$ the dimensionality, $k$ the number of groups,
+$I$ the number of Lloyd iterations and $K = 7$ the number of candidate values
+of $\hat{k}$. Table~\ref{tab:complexity} gives the cost of each component and
+the number of times the design invokes it.
 
 \begin{table}[h]
 \centering
-\caption{Wall-clock cost of the executed design at $m = 1000$, on $18$ worker
-         processes. The fidelity stage is instrumented and its figure is a
-         direct measurement. Synthesis is taken from the interval over which its
-         $144{,}000$ outputs were written, so it includes any idle time within
-         that interval. The clustering figure is not a measurement of this run:
-         it extrapolates a per-dataset cost timed separately on the same
-         hardware, and is marked approximate for that reason.}
-\label{tab:cost}
+\caption{Asymptotic cost per invocation and total invocations in the executed
+         design ($144$ scenarios $\times$ $n = 5$ replicates $\times$
+         $m = 1000$ draws $= 720{,}000$ pairs). Exact optimisation of the
+         $k$-means objective is NP-hard for $k \ge 2$ \citep{inaba1994}, so
+         Lloyd's heuristic \citep{lloyd1982} is used throughout.}
+\label{tab:complexity}
 \small
-\begin{tabular}{lrr}
+\begin{tabular}{llr}
 \toprule
-Stage & Wall time & Unit cost \\
+Component & Cost per invocation & Invocations \\
 \midrule
-Synthetic data generation ($144{,}000$ datasets) & $1.24$ h & $31$ ms/dataset \\
-Clustering evaluation ($720{,}000$ pairs)        & $\approx 1.4$ h & $\approx 7$ ms/pair \\
-Fidelity metrics ($1.15 \times 10^{7}$ fits)     & $4.44$ h & $1.4$ ms/fit \\
-\midrule
-Total                                            & $\approx 7$ h & \\
+CART synthesis \citep{breiman1984}      & $O(p^{2} N \log N)$ & $1.44 \times 10^{5}$ \\
+Lloyd iteration \citep{macqueen1967,lloyd1982} & $O(I k N p)$, $\times 10$ restarts & $5.77 \times 10^{6}$ \\
+Ward linkage \citep{ward1963,murtagh2017}      & $O(N^{2} p)$ time, $O(N^{2})$ space & $5.77 \times 10^{6}$ \\
+Silhouette \citep{rousseeuw1987}               & $O(N^{2} p)$ & $1.15 \times 10^{7}$ \\
+Hungarian alignment \citep{kuhn1955,jonker1987} & $O(k^{3})$ & $1.44 \times 10^{6}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The synthetic datasets occupy $21$~GB on disk in uncompressed Parquet. Cost
-scales linearly in $m$: the same design at $m = 100$ completes in roughly a
-tenth of the time, and reproduces every estimate reported here to within
-$0.025$, so the larger run buys precision rather than a change in conclusions.
+Three consequences follow. First, the \emph{binding} term is $O(N^{2}p)$, from
+Ward's linkage and the silhouette, not from the number of design cells: doubling
+$N$ quadruples the cost, whereas doubling $m$ or the number of scenarios merely
+doubles it. The $O(N^{2})$ memory of the linkage is what caps $N$ in practice,
+since each worker holds its own distance structure. Second, the model-selection
+scan dominates the fit count, because estimating $\hat{k}$ requires $K$ fits and
+$K$ silhouette evaluations for each algorithm on each dataset. Writing $A = 2$
+for the algorithms, the fidelity stage performs
+$720 \times A(K+1) + 720{,}000 \times A(K+1) = 1.15 \times 10^{7}$ clustering
+fits. Third, the partition of each original dataset is computed once per
+replicate and reused across that replicate's $1000$ draws; computing it per draw
+would have multiplied the original-side work by $10^{3}$ for an identical
+result.
+
+Ward's linkage admits an $O(N^{2})$ nearest-neighbour-chain formulation
+\citep{murtagh2017,mullner2011}, and $k$-means can be seeded to bound its
+expected error \citep{arthur2007}; we use the library defaults rather than these
+refinements, so the figures below are conservative.
+
+\begin{table}[h]
+\centering
+\caption{Wall-clock cost at $m = 1000$ on an AMD Ryzen~9 9900X
+         (12~cores / 24~threads, $46$~GiB) with $18$ worker processes. The
+         evidence differs by row: the fidelity stage is instrumented; synthesis
+         is the interval over which its outputs were written, so it includes
+         idle time; the clustering stage was not instrumented and its
+         timestamps bound it only loosely (below $5.6$ h), so its figure
+         extrapolates a directly timed $0.88$ s per dataset.}
+\label{tab:cost}
+\small
+\begin{tabular}{llrr}
+\toprule
+Stage & Evidence & Wall time & Unit cost \\
+\midrule
+Synthesis ($1.44 \times 10^{5}$ datasets) & write interval & $1.24$ h & $31$ ms/dataset \\
+Clustering ($7.2 \times 10^{5}$ pairs)    & extrapolated   & $\approx 2.0$ h & $\approx 10$ ms/pair \\
+Fidelity ($1.15 \times 10^{7}$ fits)      & instrumented   & $4.44$ h & $1.4$ ms/fit \\
+\midrule
+Total & & $\approx 7.6$ h & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The synthetic datasets occupy $21$~GB as uncompressed Parquet. All stages are
+embarrassingly parallel over the $720$ (scenario, replicate) units, so wall time
+falls roughly linearly in the worker count until memory binds. Cost is linear in
+$m$: the same design at $m = 100$ completes in about a tenth of the time and
+reproduces every estimate reported here to within $0.025$, so the larger run
+buys precision rather than a change in conclusions.
 
 \end{appendices}
 
