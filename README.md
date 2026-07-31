@@ -113,7 +113,7 @@ uv run run-clustering --restart
 ```
 
 Wall times from the completed m = 1000 run (18 workers, Ryzen 9 9900X):
-synthesis 1.24 h, clustering ~2.0 h, metrics 4.44 h, total ~7.6 h. See
+synthesis 1.24 h, clustering ~3.6 h, metrics 4.44 h, total ~9.3 h. See
 "Adapting the parallelism to your hardware" below for what is measured and what
 is extrapolated.
 
@@ -141,11 +141,11 @@ Or stage by stage, with the estimates from above:
 
 ```bash
 Rscript R/generate_synthetic.R      # 1.24 h, 21 GB at m = 1000
-uv run run-clustering               # ~2.0 h
+uv run run-clustering               # ~3.6 h
 uv run recompute-metrics            # 4.44 h
 ```
 
-Costs scale linearly in `m`: at `m = 1000` expect **~7.6 h total** and 21 GB of
+Costs scale linearly in `m`: at `m = 1000` expect **~9.3 h total** and 21 GB of
 synthetic data (144,000 files). See the estimate provenance above — these are
 per-unit costs measured on this machine and multiplied out, not timings from a
 completed `m = 1000` run.
@@ -267,9 +267,9 @@ with 18 workers, at `m = 1000`:
 | stage | wall time | evidence |
 |---|---|---|
 | synthetic data (144,000 datasets) | 1.24 h | interval over which outputs were written |
-| clustering (720,000 pairs) | ~2.0 h | extrapolated from a directly timed 0.88 s/dataset |
+| clustering (720,000 pairs) | ~3.6 h | measured on a random sample of 3,000 inputs, scaled |
 | fidelity metrics (1.15e7 fits) | 4.44 h | instrumented, direct measurement |
-| **total** | **~7.6 h** | |
+| **total** | **~9.3 h** | |
 
 Scaling is linear in `m` and in the number of scenarios, and quadratic in `N`.
 At `m = 100` the whole pipeline takes about a tenth as long and reproduces every

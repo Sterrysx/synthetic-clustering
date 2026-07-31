@@ -972,7 +972,9 @@ the loss of the units in flight.
          an already-saturated core, so throughput still rises but efficiency
          falls to $56\%$ at $18$ workers and $45\%$ at $24$. The production runs
          use $18$: past the efficiency knee, but chosen for wall time on an
-         otherwise idle machine.}
+         otherwise idle machine. The efficiency figure is not a curiosity: at
+         $56\%$, the clustering stage costs $3.6$~h rather than the $2.0$~h that
+         dividing its serial cost by $18$ would suggest.}
 \label{fig:scaling}
 \end{figure}
 
@@ -993,9 +995,11 @@ obviously right, and here it is not.
          and is stated rather than blurred: the fidelity stage is instrumented;
          synthesis is the interval over which its $1.44 \times 10^{5}$ outputs
          were written, so it includes any idle time inside that interval; the
-         clustering stage was not instrumented and its output timestamps bound
-         it only loosely (below $5.6$~h), so its entry extrapolates a directly
-         timed $0.88$~s per dataset over $18$ workers.}
+         clustering stage was not instrumented, so its entry is a measurement
+         on a uniform random sample of $3000$ of its $1.44 \times 10^{5}$ inputs,
+         run at the same worker count, scaled to the full set; this is consistent
+         with the loose upper bound of $5.6$~h implied by its output
+         timestamps.}
 \label{tab:cost}
 \small
 \begin{tabular}{llrr}
@@ -1003,10 +1007,10 @@ obviously right, and here it is not.
 Stage & Evidence & Wall time & Unit cost \\
 \midrule
 Synthesis ($1.44 \times 10^{5}$ datasets) & write interval & $1.24$ h & $31$ ms/dataset \\
-Clustering ($7.2 \times 10^{5}$ pairs)    & extrapolated   & $\approx 2.0$ h & $\approx 10$ ms/pair \\
+Clustering ($7.2 \times 10^{5}$ pairs)    & sampled        & $\approx 3.6$ h & $\approx 18$ ms/pair \\
 Fidelity ($1.15 \times 10^{7}$ fits)      & instrumented   & $4.44$ h & $1.4$ ms/fit \\
 \midrule
-Total & & $\approx 7.6$ h & \\
+Total & & $\approx 9.3$ h & \\
 \bottomrule
 \end{tabular}
 \end{table}
