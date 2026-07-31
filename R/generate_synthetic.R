@@ -89,7 +89,10 @@ cat(sprintf("[INFO] Found %d OD file(s) x %d syn reps = %d SD file(s) to generat
 
 # 4. Build Atomic Task Queue
 # ------------------------------------------------------------------------------
-NUM_CORES <- max(1L, parallel::detectCores() - 6L)
+# Worker processes. Override with SYNTHCLUST_WORKERS to match your machine;
+# see "Adapting the parallelism to your hardware" in the README.
+.w <- Sys.getenv("SYNTHCLUST_WORKERS")
+NUM_CORES <- if (nzchar(.w)) max(1L, as.integer(.w)) else max(1L, parallel::detectCores() - 6L)
 
 todo_dir  <- file.path(tempdir(), "sd_clust_tasks_todo")
 doing_dir <- file.path(tempdir(), "sd_clust_tasks_doing")

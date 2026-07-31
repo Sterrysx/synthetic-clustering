@@ -228,7 +228,11 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--restart", action="store_true",
                     help="discard checkpoints and recompute every scenario")
-    ap.add_argument("--workers", type=int, default=20)
+    ap.add_argument("--workers", type=int,
+                    default=int(os.environ.get("SYNTHCLUST_WORKERS",
+                                               max(1, (os.cpu_count() or 4) - 2))),
+                    help="worker processes (default: cores - 2, or "
+                         "$SYNTHCLUST_WORKERS)")
     args = ap.parse_args()
 
     # One unit per (scenario, replicate): 144 x 5 = 720.

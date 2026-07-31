@@ -122,7 +122,10 @@ cat(sprintf("[INFO] Distributions: %s\n", paste(dist_names, collapse = ", ")))
 output_dir <- file.path(DATA_ROOT, "data", "original")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
-NUM_CORES <- max(1L, detectCores() - 6L)
+# Worker processes. Override with SYNTHCLUST_WORKERS to match your machine;
+# see "Adapting the parallelism to your hardware" in the README.
+.w <- Sys.getenv("SYNTHCLUST_WORKERS")
+NUM_CORES <- if (nzchar(.w)) max(1L, as.integer(.w)) else max(1L, detectCores() - 6L)
 
 # 6. Build Atomic Task Queue
 # ------------------------------------------------------------------------------

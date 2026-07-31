@@ -229,6 +229,57 @@ docs/
   verify_notebook_metric.py    forensic: reproduces the superseded metric
 ```
 
+## Adapting the parallelism to your hardware
+
+Every stage is embarrassingly parallel over design units, so the pipeline scales
+with cores and needs no configuration to run correctly — only to run *well* on a
+machine unlike the one used here.
+
+**One knob, everywhere.** `SYNTHCLUST_WORKERS` sets the worker count for all four
+stages (both R generators, the clustering evaluation, and the fidelity metrics):
+
+```bash
+SYNTHCLUST_WORKERS=8 make all        # 8 workers throughout
+uv run recompute-metrics --workers 8 # or per-stage, for the Python stages
+```
+
+Unset, each stage defaults to roughly two below the detected core count. That is
+a reasonable default on a dedicated machine and too aggressive on a laptop you
+are also using.
+
+**Memory is the real constraint, not cores.** Ward's linkage and the silhouette
+both need the pairwise distance structure, so each worker holds
+$O(N^2)$ doubles: about 8 MB per worker at `N = 1000`, but 800 MB at
+`N = 10000`. Raising `N` while keeping the worker count fixed is what runs a
+machine out of memory. Budget roughly
+
+```
+workers x (N/1000)^2 x 8 MB
+```
+
+and leave headroom. At the default `N = 1000` this is negligible and you can use
+every core.
+
+**Reference timings.** On an AMD Ryzen 9 9900X (12 cores / 24 threads, 46 GiB)
+with 18 workers, at `m = 1000`:
+
+| stage | wall time | evidence |
+|---|---|---|
+| synthetic data (144,000 datasets) | 1.24 h | interval over which outputs were written |
+| clustering (720,000 pairs) | ~1.4 h | extrapolated from a separately timed per-dataset cost |
+| fidelity metrics (1.15e7 fits) | 4.44 h | instrumented, direct measurement |
+| **total** | **~7 h** | |
+
+Scaling is linear in `m` and in the number of scenarios, and quadratic in `N`.
+At `m = 100` the whole pipeline takes about a tenth as long and reproduces every
+reported estimate to within 0.025 — useful for a smoke test before committing to
+the full run. Disk: 21 GB of synthetic Parquet at `m = 1000`, 2.1 GB at `m = 100`.
+
+**If a stage dies, just re-run it.** Generation skips datasets that already
+exist; the two analysis stages checkpoint each of the 720 (scenario, replicate)
+units and resume from the last completed one. Nothing is lost but the units in
+flight.
+
 ## Two things to know
 
 **The metrics come from two different scripts, deliberately.**

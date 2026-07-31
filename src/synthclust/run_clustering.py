@@ -33,7 +33,11 @@ import pandas as pd
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-N_WORKERS   = 18
+# Worker processes. Defaults to two below the detected core count, leaving room
+# for the OS and this process; override with SYNTHCLUST_WORKERS to match your
+# machine. See "Adapting the parallelism to your hardware" in the README.
+N_WORKERS = int(os.environ.get("SYNTHCLUST_WORKERS",
+                               max(1, (os.cpu_count() or 4) - 2)))
 _DASH_LINES = N_WORKERS + 3
 
 # ── Terminal Colors ───────────────────────────────────────────────────────────
