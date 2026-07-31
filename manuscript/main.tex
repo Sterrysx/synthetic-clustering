@@ -869,19 +869,25 @@ corresponding height.
 \section{Computational complexity and cost}
 \label{app:complexity}
 
-\noindent
-Let $N$ be the sample size, $p$ the dimensionality, $k$ the number of groups,
-$I$ the number of Lloyd iterations and $K = 7$ the number of candidate values
-of $\hat{k}$. Table~\ref{tab:complexity} gives the cost of each component and
-the number of times the design invokes it.
+This appendix states what the study costs to run and why. Throughout, $N$ is the
+sample size, $p$ the dimensionality, $k$ the number of groups, $I$ the number of
+Lloyd iterations to convergence, $K = 7$ the number of candidate values of
+$\hat{k}$, and $A = 2$ the number of algorithms.
+
+\subsection{Cost of the components}
+
+Table~\ref{tab:complexity} collects the asymptotic cost of each component
+together with the number of times the executed design invokes it. The
+invocation counts follow from the design: $144$ scenarios $\times\ n = 5$
+replicates $= 720$ units, each with $m = 1000$ synthetic draws, giving
+$720{,}000$ original--synthetic pairs.
 
 \begin{table}[h]
 \centering
-\caption{Asymptotic cost per invocation and total invocations in the executed
-         design ($144$ scenarios $\times$ $n = 5$ replicates $\times$
-         $m = 1000$ draws $= 720{,}000$ pairs). Exact optimisation of the
-         $k$-means objective is NP-hard for $k \ge 2$ \citep{inaba1994}, so
-         Lloyd's heuristic \citep{lloyd1982} is used throughout.}
+\caption{Cost per invocation and invocation count. Exact minimisation of the
+         $k$-means objective is NP-hard in general and remains so for $k = 2$
+         in arbitrary dimension \citep{inaba1994}, so Lloyd's local-search
+         heuristic \citep{lloyd1982} is used, restarted ten times.}
 \label{tab:complexity}
 \small
 \begin{tabular}{llr}
@@ -889,7 +895,7 @@ the number of times the design invokes it.
 Component & Cost per invocation & Invocations \\
 \midrule
 CART synthesis \citep{breiman1984}      & $O(p^{2} N \log N)$ & $1.44 \times 10^{5}$ \\
-Lloyd iteration \citep{macqueen1967,lloyd1982} & $O(I k N p)$, $\times 10$ restarts & $5.77 \times 10^{6}$ \\
+Lloyd iteration \citep{macqueen1967,lloyd1982} & $O(IkNp)$, $\times 10$ restarts & $5.77 \times 10^{6}$ \\
 Ward linkage \citep{ward1963,murtagh2017}      & $O(N^{2} p)$ time, $O(N^{2})$ space & $5.77 \times 10^{6}$ \\
 Silhouette \citep{rousseeuw1987}               & $O(N^{2} p)$ & $1.15 \times 10^{7}$ \\
 Hungarian alignment \citep{kuhn1955,jonker1987} & $O(k^{3})$ & $1.44 \times 10^{6}$ \\
@@ -897,34 +903,99 @@ Hungarian alignment \citep{kuhn1955,jonker1987} & $O(k^{3})$ & $1.44 \times 10^{
 \end{tabular}
 \end{table}
 
-Three consequences follow. First, the \emph{binding} term is $O(N^{2}p)$, from
-Ward's linkage and the silhouette, not from the number of design cells: doubling
-$N$ quadruples the cost, whereas doubling $m$ or the number of scenarios merely
-doubles it. The $O(N^{2})$ memory of the linkage is what caps $N$ in practice,
-since each worker holds its own distance structure. Second, the model-selection
-scan dominates the fit count, because estimating $\hat{k}$ requires $K$ fits and
-$K$ silhouette evaluations for each algorithm on each dataset. Writing $A = 2$
-for the algorithms, the fidelity stage performs
-$720 \times A(K+1) + 720{,}000 \times A(K+1) = 1.15 \times 10^{7}$ clustering
-fits. Third, the partition of each original dataset is computed once per
-replicate and reused across that replicate's $1000$ draws; computing it per draw
-would have multiplied the original-side work by $10^{3}$ for an identical
-result.
+Two structural facts follow. First, the \emph{binding} term is $O(N^{2}p)$,
+contributed by Ward's linkage and by the silhouette, and it is a property of the
+sample size rather than of the design: doubling $N$ quadruples the work, whereas
+doubling $m$ or the number of scenarios only doubles it. The $O(N^{2})$ working
+set of the linkage is also what caps $N$ in practice, since each worker holds
+its own distance structure; at $N = 1000$ this is roughly $8$~MB per worker and
+irrelevant, at $N = 10^{4}$ it is $800$~MB and binding. Second, model selection
+dominates the fit count: estimating $\hat{k}$ costs $K$ fits and $K$ silhouette
+evaluations per algorithm per dataset, so the fidelity stage performs
+$720 \times A(K{+}1) + 720{,}000 \times A(K{+}1) = 1.15 \times 10^{7}$
+clustering fits rather than the $1.44 \times 10^{6}$ that fitting at a single
+known $k$ would require. Where a cheaper formulation exists we did not pursue
+it: Ward admits an $O(N^{2})$ nearest-neighbour-chain implementation
+\citep{murtagh2017,mullner2011} and $k$-means can be seeded to bound its
+expected error \citep{arthur2007}, so the figures below are conservative
+relative to a tuned implementation.
 
-Ward's linkage admits an $O(N^{2})$ nearest-neighbour-chain formulation
-\citep{murtagh2017,mullner2011}, and $k$-means can be seeded to bound its
-expected error \citep{arthur2007}; we use the library defaults rather than these
-refinements, so the figures below are conservative.
+One algorithmic choice does change the constant materially. The partition of
+each original dataset is computed once per replicate and reused across that
+replicate's $1000$ draws. Computing it inside the draw loop would multiply the
+original-side work by $10^{3}$ and produce identical output, since the original
+data do not vary within a replicate.
+
+\subsection{Parallel execution}
+
+The design is a set of independent units, so the computation is
+embarrassingly parallel in the strict sense: no communication, no shared mutable
+state, and a serial fraction confined to reading configuration and writing the
+merged result. Amdahl's law is therefore not the operative constraint at this
+scale; hardware contention is, and the implementation targets three specific
+sources of it.
+
+\emph{Thread oversubscription.} The clustering routines call into BLAS, which by
+default spawns one thread per core \emph{inside each worker}. With $P$ worker
+processes this creates $P \times C$ runnable threads on $C$ cores, and the
+resulting context-switching and cache thrashing dominate the useful work. All
+three stages therefore pin \texttt{OMP\_NUM\_THREADS},
+\texttt{OPENBLAS\_NUM\_THREADS} and \texttt{MKL\_NUM\_THREADS} to $1$ before
+importing any numerical library, leaving parallelism entirely to the process
+pool. The effect is not marginal: on the reference machine, $18$ concurrent
+workers each running an identical model-selection scan complete in $1.9$~s with
+threads pinned and $84.5$~s without, a factor of $44$.
+
+\emph{Load imbalance.} Unit cost varies with $p$ and $k$, so a static partition
+of the task list leaves workers idle at the tail. The synthesis stage instead
+uses a work-stealing queue: tasks are serialised into a spool directory and each
+worker claims one by \texttt{rename(2)} into a \emph{doing} directory. Rename
+within a filesystem is atomic, so exactly one worker can win a given task and no
+lock is required. Workers pull candidates in batches of $200$ rather than
+listing the spool per task, which at $1.44 \times 10^{5}$ tasks reduces
+directory-scan overhead from hours to seconds. The Python stages achieve the
+same effect through a dynamically scheduled pool.
+
+\emph{Restart cost.} Each unit checkpoints its own result on completion, so an
+interrupted run resumes at the last completed unit rather than from the start.
+At a stage cost of several hours this converts a failure from a total loss into
+the loss of the units in flight.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_scaling.pdf}
+\caption{Strong scaling of the model-selection workload on the reference
+         machine, $72$ independent units, BLAS pinned to one thread per worker.
+         Scaling is near-linear to $8$ workers ($6.9\times$, $87\%$ efficiency)
+         and the knee falls at $12$, the physical core count. Beyond it the
+         additional workers occupy SMT siblings that share execution units with
+         an already-saturated core, so throughput still rises but efficiency
+         falls to $56\%$ at $18$ workers and $45\%$ at $24$. The production runs
+         use $18$: past the efficiency knee, but chosen for wall time on an
+         otherwise idle machine.}
+\label{fig:scaling}
+\end{figure}
+
+Figure~\ref{fig:scaling} shows the measured strong-scaling curve. The shape is
+the expected one for a compute-bound, memory-light workload on a simultaneous
+multithreading processor, and it makes the operating point explicit: $18$
+workers buy a $10.0\times$ speed-up over serial execution, while $12$ would give
+$8.8\times$ at much better efficiency. Neither choice is a contribution; the
+point of measuring is that the default of one worker per hardware thread is not
+obviously right, and here it is not.
+
+\subsection{Measured cost}
 
 \begin{table}[h]
 \centering
-\caption{Wall-clock cost at $m = 1000$ on an AMD Ryzen~9 9900X
-         (12~cores / 24~threads, $46$~GiB) with $18$ worker processes. The
-         evidence differs by row: the fidelity stage is instrumented; synthesis
-         is the interval over which its outputs were written, so it includes
-         idle time; the clustering stage was not instrumented and its
-         timestamps bound it only loosely (below $5.6$ h), so its figure
-         extrapolates a directly timed $0.88$ s per dataset.}
+\caption{Wall-clock cost at $m = 1000$ on an AMD Ryzen~9 9900X (12~cores,
+         24~threads, $46$~GiB) with $18$ workers. The evidence differs by row
+         and is stated rather than blurred: the fidelity stage is instrumented;
+         synthesis is the interval over which its $1.44 \times 10^{5}$ outputs
+         were written, so it includes any idle time inside that interval; the
+         clustering stage was not instrumented and its output timestamps bound
+         it only loosely (below $5.6$~h), so its entry extrapolates a directly
+         timed $0.88$~s per dataset over $18$ workers.}
 \label{tab:cost}
 \small
 \begin{tabular}{llrr}
@@ -940,12 +1011,10 @@ Total & & $\approx 7.6$ h & \\
 \end{tabular}
 \end{table}
 
-The synthetic datasets occupy $21$~GB as uncompressed Parquet. All stages are
-embarrassingly parallel over the $720$ (scenario, replicate) units, so wall time
-falls roughly linearly in the worker count until memory binds. Cost is linear in
+The synthetic datasets occupy $21$~GB as uncompressed Parquet. Cost is linear in
 $m$: the same design at $m = 100$ completes in about a tenth of the time and
 reproduces every estimate reported here to within $0.025$, so the larger run
-buys precision rather than a change in conclusions.
+buys precision rather than a change in any conclusion.
 
 \end{appendices}
 
