@@ -145,7 +145,7 @@ uv run run-clustering               # ~2.0 h
 uv run recompute-metrics            # 4.44 h
 ```
 
-Costs scale linearly in `m`: at `m = 1000` expect **~7.7 h total** and 21 GB of
+Costs scale linearly in `m`: at `m = 1000` expect **~7.6 h total** and 21 GB of
 synthetic data (144,000 files). See the estimate provenance above — these are
 per-unit costs measured on this machine and multiplied out, not timings from a
 completed `m = 1000` run.
