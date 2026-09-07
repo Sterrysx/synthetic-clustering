@@ -167,8 +167,9 @@ files) and are **not** committed. Three ways to get them, cheapest first:
    `results/khat_fidelity_full.parquet` are committed and contain every number
    in the manuscript. Rebuilding the figures, the supplementary table or the PDFs
    needs only those two files — the raw datasets are not read.
-2. **Point at an existing copy.** `data/` here is a symlink to the original
-   study directory. If you move things, either repoint it or set:
+2. **Point at an existing copy.** `data/` here is a symlink to the sibling
+   `../ml-research/clustering/data` study directory. If you move things, either
+   repoint it or set:
    ```bash
    export SYNTHCLUST_DATA=/path/containing/data/
    ```

@@ -41,7 +41,7 @@ def one(fp):
                 mvd_km=mvd(X,tl,km), mvd_hc=mvd(X,tl,hc))
 
 if __name__=="__main__":
-    files=sorted(glob.glob("/home/sterry/Desktop/academic/ml-research/clustering/data/original/*.parquet"))
+    files=sorted(glob.glob("/home/sterry/Desktop/academic/research/ml-research/clustering/data/original/*.parquet"))
     with ProcessPoolExecutor(max_workers=20) as ex:
         rows=list(ex.map(one, files))
     df=pd.DataFrame(rows)
