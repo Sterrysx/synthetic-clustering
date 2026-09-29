@@ -1,0 +1,49 @@
+% =====================================================================
+%  supplementary_header_blind.tex -- JoC header for the supplementary file.
+%  Replaces everything in supplementary.tex from \documentclass down to and
+%  including \maketitle.  Referee layout (joc_referee.tex), JoC reference
+%  style (joc_bib.tex) and the double-anonymous switch (blind.tex): in blind
+%  mode the author/affiliation lines below are swallowed and replaced by one
+%  neutral line; with \blindfalse they print as in the non-blind version.
+%  The title deliberately does not name the authors or their institutions.
+% =====================================================================
+\documentclass[pdflatex,referee]{sn-jnl}
+\input{joc_referee}
+\input{joc_bib}
+\input{blind}
+\pdfmapfile{=local.map}          %% build-machine workaround; delete elsewhere
+\usepackage{graphicx}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thesection}{S\arabic{section}}
+
+\begin{document}
+
+\title{Supplementary Material\\
+       \large Downstream Utility of Synthetic Data for Clustering}
+\author[1]{Oriol Farr\'es Vilar}
+\author[2]{Jordi Cort\'es}
+\author[3]{Xinnuo Chen}
+\author[4]{Victoria L\'opez}
+\author[2]{Daniel Fern\'andez}
+\affil[1]{Department of Computer Science,
+          Universitat Polit\`ecnica de Catalunya, Barcelona, Spain}
+\affil[2]{Department of Statistics and Operations Research,
+          Universitat Polit\`ecnica de Catalunya, Barcelona, Spain}
+\affil[3]{Department of Statistical Science,
+          University College London, London, United Kingdom}
+\affil[4]{CUNEF Universidad, Madrid, Spain}
+\abstract{Supporting figures and tables for the main article
+  \blindalt{(submitted for anonymous review to the Journal of Classification)}{}.
+  Code: \repourl.}
+\maketitle

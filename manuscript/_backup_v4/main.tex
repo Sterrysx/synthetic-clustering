@@ -1,0 +1,1233 @@
+% =====================================================================
+%  Downstream utility of synthetic data for clustering
+%  Journal of Classification submission draft -- revision after the second
+%  internal review round (X. Chen annotations on v3; V. Lopez contribution).
+%
+%  TEMPLATE
+%  --------
+%  This compiles against Springer Nature's sn-jnl.cls (v3.x), which is in this
+%  folder together with sn-basic.bst.
+%
+%  IMPORTANT: sn-jnl.cls here was obtained from a third-party GitHub mirror
+%  because Springer's own download page was unreachable from the machine this
+%  was built on. Before submitting, replace it with the official copy from
+%  Springer's LaTeX author-support page (or open the template on Overleaf and
+%  download the zip) and rebuild. The document body should not need changes.
+%
+%  \pdfmapfile below is a workaround for a broken font-map index on the build
+%  machine. On a normal TeX installation, delete that one line.
+% =====================================================================
+\documentclass[pdflatex,sn-basic]{sn-jnl}
+
+\pdfmapfile{=local.map}          %% build-machine workaround; delete elsewhere
+
+%%%% Standard Springer Nature preamble (from sn-article.tex)
+\usepackage{graphicx}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+
+% Indicator function (review round 2: \mathbb{1} rendered as a stray glyph).
+\newcommand{\ind}{\mathbf{1}}
+
+\begin{document}
+
+\title{Downstream Utility of Synthetic Data for Clustering}
+
+\author[1]{Oriol Farr\'es Vilar}
+\author[2]{Jordi Cort\'es}
+\author[3]{Xinnuo Chen}
+\author[4]{Victoria L\'opez}
+\author[2]{Daniel Fern\'andez}
+
+\affil[1]{Department of Computer Science,
+          Universitat Polit\`ecnica de Catalunya, Barcelona, Spain}
+\affil[2]{Department of Statistics and Operations Research,
+          Universitat Polit\`ecnica de Catalunya, Barcelona, Spain}
+\affil[3]{Department of Statistical Science,
+          University College London, London, United Kingdom}
+\affil[4]{CUNEF Universidad, Madrid, Spain}
+
+\abstract{Synthetic data are released as privacy-preserving
+substitutes for confidential records, but their value depends on whether
+analyses of the release reproduce the original ones. We evaluate this
+for cluster analysis, whose output depends on point-cloud
+geometry. In a factorial simulation of 144 scenarios crossing separation, number of
+groups, dimensionality, correlation and distribution family (720{,}000
+evaluations), we compare $k$-means and Ward's linkage on data synthesised by
+sequential CART. Agreement between cluster counts estimated
+from synthetic and original data rises from $0.75$ to $0.98$ with separation and
+depends little on the number of groups. Against the planted number of groups
+the two algorithms perform alike, but against the original data $k$-means is
+more stable ($0.864$ versus $0.823$) and shows less geometric distortion. CART
+is close to neutral for Normal components but lowers agreement for skewed
+Gamma components, especially for Ward's linkage. Utility must be
+validated against the intended analysis.}
+
+\keywords{Synthetic data, Cluster analysis, Statistical disclosure control,
+          Analytical utility, Simulation study}
+
+\maketitle
+
+% =====================================================================
+\section{Introduction}
+% =====================================================================
+
+Synthetic data are artificial records produced by a generative model fitted to
+a confidential dataset, released in place of the original records so that the
+statistical structure of the data is retained while no real individual is
+exposed. The idea originates in statistical disclosure control, where
+\citet{rubin1993} proposed treating the confidential values as missing and
+releasing multiply-imputed replacements, and \citet{little1993} developed the
+companion analysis of masked data; \citet{drechsler2011} gives a book-length
+treatment of the resulting framework, and \citet{matthews2011} survey the wider
+family of disclosure-limitation methods within which synthesis sits. Synthetic
+data were initially developed mainly for statistical agencies, but their
+application has since expanded to many other fields. General-purpose
+synthesisers are now distributed as statistical software
+\citep{nowok2016,templ2017}, and administrative-data research is an active
+area of application \citep{kokosi2022}. Synthetic records are also generated
+for health services research \citep{gonzales2023,giuffre2023}, for
+biobehavioural science, where they additionally serve reproducibility and
+hypothesis generation \citep{quintana2020}, and, increasingly, through deep
+generative architectures applied to tabular data \citep{goyal2024,zhao2024}.
+
+Synthetic data are mainly generated to support subsequent analyses, and cluster
+analysis is one of the most widely used unsupervised approaches: given
+unlabelled observations, it partitions them into groups that are internally
+homogeneous and mutually distinct. Two main approaches have dominated applied
+practice for decades: centroid-based methods, such as $k$-means
+\citep{macqueen1967,steinley2006}, which minimise the within-cluster sum of
+squares and remain the most widely deployed clustering algorithms
+\citep{ahmed2020}; and agglomerative hierarchical methods, such as Ward's
+linkage \citep{ward1963}, which build a dendrogram by successive merging and
+do not require the number of groups to be fixed in advance. Both remain
+central to contemporary applications: in single-cell transcriptomics, where
+partitions define cell types \citep{zappia2018}, and in mass cytometry, where
+the choice among clustering methods materially changes the biological
+conclusion \citep{liu2019}.
+
+These two areas intersect whenever a clustering analysis must be performed on
+data that cannot be released in raw form. In clinical and administrative
+settings, for example, subgroup discovery can be highly valuable, but access
+to the original data is often restricted for privacy reasons
+\citep{goncalves2020,elemam2020,bhanot2021}. In model development, access to
+the original data can also be slow or limited, and synthetic records then
+serve as an augmentation and development resource \citep{rankin2020}.
+Synthetic data can therefore provide a practical solution in both situations.
+However, when an analysis is performed on synthetic rather than original data,
+it is important to assess whether the resulting partition is similar to the
+one that would have been obtained from the original records. This is what the
+\emph{analytical utility} of synthetic data refers to.
+
+Analytical utility can be assessed from a general and from a specific
+perspective. \emph{General} utility asks whether the synthetic data resemble
+the original in a global sense, and \emph{specific} utility asks whether a
+particular analysis yields matching conclusions \citep{snoke2018}. The
+distinction matters because the two can diverge: a generator that reproduces
+marginal distributions and low-order correlations faithfully may still distort
+the higher-order geometry on which a specific procedure depends. Empirical work
+bears this out. Benchmarking studies of synthetic health records find that
+utility rankings depend heavily on which downstream task is used to measure
+them \citep{yan2022,elemam2022}, and direct replications of published analyses
+on synthetic counterparts show agreement that varies by study and by estimand
+\citep{reinerbenaim2020}. A recent systematic review of tabular synthesis tools
+makes the same point from the measurement side, finding no consensus on which
+utility metrics should be reported and little agreement between them
+\citep{lautrup2024}. Utility is therefore not a scalar property of a dataset;
+it is a property of the pairing between a dataset and the analysis applied to
+it.
+
+Clustering provides a useful approach for assessing this relationship. Unlike
+a regression coefficient, which summarises a conditional mean and is
+comparatively robust to local perturbation, a partition is sensitive to the
+fine structure of the point cloud: relative positions, local density,
+separability and within-group dispersion. Two datasets can share identical
+means, variances and pairwise correlations and still yield entirely different
+partitions. Distortion that a generator introduces into local geometry may
+therefore appear in a clustering analysis before it appears in a resemblance
+check.
+
+This article asks whether CART-based sequential synthesis, the default
+non-parametric engine of \texttt{synthpop} \citep{nowok2016} and a widely used
+method for tabular data, preserves the structure that clustering relies on.
+This study extends the line of inquiry opened by \citet{chen2025}, which
+established a simulation harness for this question but restricted attention to
+$k$-means on Normal data and relied on a resemblance statistic that proved
+insensitive to structural quality. We broaden the scope in three directions: a
+second, structurally different clustering method; a skewed distribution family
+that exposes the axis-aligned behaviour of tree-based synthesis; and a set of
+structural metrics that compare the partition recovered from the synthetic
+data with the partition recovered from the original data.
+
+The utility of synthetic data for clustering analysis is assessed through three
+main objectives. First, to determine whether CART-synthesised data preserve the
+structure needed to recover the number of clusters, and how this depends on
+separation, number of groups, dimensionality, feature correlation and
+distribution family. Second, to determine whether the cluster structure is
+preserved beyond the number of clusters: how much fidelity of centroid
+location, within-group dispersion and group sizes is lost under synthesis, and
+which design factors drive that loss. Third, to determine whether partitioning
+and hierarchical methods respond similarly to synthetic distortion, or whether
+one is systematically more robust than the other. We address these questions
+with a factorial simulation. For each scenario, several original datasets are
+simulated from a mixture with known group structure, and each original dataset
+is then synthesised many times with CART. We compare the number of clusters
+recovered from each synthetic dataset with two references: the true number of
+groups used to simulate the original dataset, and the number of clusters
+recovered from that original dataset by the same algorithm.
+
+% =====================================================================
+\section{Methods}
+% =====================================================================
+
+The study is a controlled factorial simulation. We first state the discrepancy
+framework and the two clustering algorithms, then the generation of original
+and synthetic data, then the metrics used to quantify structural degradation,
+and finally the way those metrics are summarised across replications.
+
+\subsection{A discrepancy framework for structural utility}
+
+Let $D_R$ denote the original (reference) data and $G$ a generative mechanism,
+so that $D_S = G(D_R)$ is the synthetic dataset. Let $A$ be the downstream
+algorithm, producing summaries $\theta_R = A(D_R)$ and $\theta_S = A(D_S)$.
+Utility is quantified by a discrepancy
+\begin{equation}
+  \Delta(\theta_R, \theta_S) = f(N, p, \rho, \sigma, k, F),
+  \label{eq:discrepancy}
+\end{equation}
+studied as a function of the sample size $N$, dimensionality $p$, feature
+correlation $\rho$, separation $\sigma$, number of latent groups $k$ and
+distribution family $F$. A generator is useful for a task over a region of the
+design space when $\Delta$ remains small throughout it; the scientific content
+of an evaluation is the shape of $\Delta$: which factors inflate it, which leave
+it unchanged, and whether different algorithms respond similarly.
+
+In the clustering setting, $\theta$ comprises the estimated number of groups
+$\hat{k}$ together with the geometry of the recovered partition: its
+centroids, its group sizes and its within-group dispersion. Accordingly
+$\Delta$ is instantiated as a family of structural-fidelity measures defined in
+Section~\ref{sec:metrics}.
+
+To isolate how synthesis affects cluster structure, we use simulations with
+known ground truth rather than real administrative data. Each scenario fixes a
+configuration $(N, p, k, \rho, \sigma, F)$ for which the true group membership
+of every point is known by construction. This makes it possible to separate the
+difficulty of the clustering problem itself from the distortion introduced by
+synthesis, avoids relying solely on resemblance-based evaluations, and allows
+$\Delta$ in Eq.~\eqref{eq:discrepancy} to be traced as an explicit function of
+each design factor.
+
+\subsection{Clustering algorithms}
+\label{sec:algorithms}
+
+We compare two standard approaches: $k$-means \citep{macqueen1967} as a
+partitioning method, and agglomerative clustering with Ward's linkage
+\citep{ward1963} as a hierarchical method. They are chosen because they rely on
+different optimisation strategies and may therefore respond differently to the
+distortions introduced by tree-based synthesis (described in
+Section~\ref{sec:cart}). $k$-means minimises the within-cluster sum of squares
+and so tends to favour convex, isotropic groups of comparable size
+\citep{steinley2006,xiong2009}, with decision boundaries given by the bisectors
+of the centroid Voronoi tessellation; we retain the lowest-inertia solution
+over ten random initialisations. Ward's linkage merges, at each step, the pair
+of clusters whose union least increases the total within-cluster error sum of
+squares. The two methods therefore share a variance-based criterion, but Ward's
+merges are greedy and never revisited, so a merge driven by a local density
+irregularity early in the hierarchy propagates to the final partition, whereas
+$k$-means reassigns points iteratively; the two families have long been known
+to differ in their sensitivity to perturbations of the data
+\citep{milligan1980}. Appendix~\ref{app:algorithms} states both objectives
+formally.
+
+\subsection{Data generation}
+
+\subsubsection{Original data}
+
+Each original dataset $D_R$ contains $N = 1000$ observations drawn from a
+$k$-component mixture in $\mathbb{R}^p$ with known group labels and equal
+component sizes ($N/k$ observations each, up to rounding). The minimum pairwise
+centroid distance is controlled by the separation $\sigma$: the first centroid
+sits at the origin and each subsequent centroid is drawn uniformly on the
+sphere of radius $\sigma$ about the origin and accepted only if it lies at
+distance at least $\sigma$ from all centroids already placed. Within-component
+covariance equals a correlation matrix with unit diagonal and off-diagonal
+entries $\rho$, giving uncorrelated (spherical) components at $\rho = 0$ and
+correlated (elliptical) components at $\rho = 0.4$; separation is therefore
+expressed in units of the within-component standard deviation. In the
+\emph{Normal} family, components are multivariate Gaussian with the specified
+centroid and covariance. In the \emph{Gamma} family, independent Gamma variates
+(shape $=1.5$, rate $=5$) are standardised to zero mean and unit variance
+within each component, correlated using the Cholesky factor of the target
+correlation matrix \citep{johnson1987}, and shifted to the component centroid.
+The two families thus share their first two moments within components and
+differ only in shape: before correlation is induced, each Gamma margin has
+skewness $2/\sqrt{1.5} \approx 1.63$, producing right-skewed groups that stress
+the axis-aligned nature of CART.
+
+The factors we vary are the same high-level geometric properties used to
+parameterise cluster-analysis benchmarks generally, namely overlap between
+groups, their number, the ambient dimension and the shape of the components
+\citep{qiu2006,zellinger2025}; here they serve not to benchmark clustering
+algorithms against each other but to locate the regions in which synthesis
+preserves the structure those algorithms depend on.
+
+Table~\ref{tab:design} lists the design factors. Each factor is varied to
+examine how it affects the conditions under which synthesis succeeds or fails:
+crossing all five gives $3 \times 4 \times 3 \times 2 \times 2 = 144$
+scenarios. For each scenario, $n = 5$ independent original datasets are
+simulated, and each original dataset is synthesised $m = 1000$ times, resulting
+in $144 \times 5 \times 1000 = 720{,}000$ synthetic-versus-original
+evaluations.
+
+\begin{table}[t]
+\centering
+\caption{Factors of the simulation design and the question each addresses.
+         Crossing all five gives 144 scenarios; with $n=5$ independent original
+         datasets per scenario and $m=1000$ synthetic datasets generated from
+         each, the design yields 720{,}000 evaluations.}
+\label{tab:design}
+\small
+\begin{tabular}{llp{6.4cm}}
+\toprule
+Factor & Levels & Rationale \\
+\midrule
+Separation $\sigma$      & $0.1,\,2,\,6,\,10$ & Spans overlapping to clearly
+  distinct groups; tests how much separation between groups is needed before
+  synthesis can preserve the structure. \\
+Number of groups $k$     & $2,\,3,\,4$        & More groups increase the
+  complexity of the cluster structure that the generator needs to
+  preserve. \\
+Dimensionality $p$       & $2,\,5,\,10$       & Each synthesised dimension
+  compounds the axis-aligned leaf structure of the generator. \\
+Correlation $\rho$       & $0,\,0.4$          & Tests whether dependence
+  between features degrades a variable-by-variable synthesis. \\
+Distribution family $F$  & Normal, Gamma      & Contrasts symmetric Gaussian
+  density with skewed Gamma density. \\
+\midrule
+Sample size $N$          & $1000$ (fixed)     & Held constant so that
+  variation is attributable to the factors above. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Synthetic data (CART)}
+\label{sec:cart}
+
+For every original dataset, synthetic data $D_S = G(D_R)$ are generated with
+the CART engine of \texttt{synthpop} \citep{nowok2016}, using proper synthesis
+(the trees are fitted to a bootstrap sample of the original data) and a minimum
+leaf size of ten. Variables are synthesised sequentially in the order
+$X_1,\dots,X_p$. The first variable is sampled from its observed marginal
+distribution. Each subsequent variable $X_j$ is then modelled by a regression
+tree \citep{breiman1984} on the already-synthesised variables, and synthetic
+values are drawn from the empirical distribution of the observed values in the
+corresponding leaf,
+\begin{equation}
+  X_j^{\text{syn}} \sim
+    \widehat{P}\bigl(X_j \mid
+      \text{leaf}(X_1^{\text{syn}},\dots,X_{j-1}^{\text{syn}})\bigr).
+  \label{eq:cart}
+\end{equation}
+
+This makes the method flexible and distribution-free, but it imposes an
+axis-aligned, piecewise-constant structure on the joint distribution: the
+synthetic point cloud is assembled from rectangular blocks whose boundaries are
+the tree splits, and synthetic values are resampled observed values. When the
+original data are smooth and symmetric, these blocks tile the space finely
+enough to be barely visible; when the data are skewed or heavy-tailed, they can
+become visible as a hardening of smooth density gradients into discrete steps.
+Detecting this failure mode, and measuring how strongly it propagates into the
+recovered partition, is the purpose of the evaluation. The group label is
+appended as the last variable of the synthesis sequence, so it does not
+influence the synthesis of the features; it is never used by the clustering
+algorithms.
+
+Synthesis was carried out with \texttt{synthpop} 1.9.2 \citep{nowok2016} under
+\textsf{R} 4.3 \citep{rcore2024}, and clustering and evaluation with
+\texttt{scikit-learn} \citep{pedregosa2011} in Python. Both stages are
+embarrassingly parallel over scenarios and were distributed across $18$ worker
+processes on a single multi-core workstation (Appendix~\ref{app:complexity}).
+
+\subsection{Evaluation metrics}
+\label{sec:metrics}
+
+Structural utility is quantified by two count-agreement measures and three
+geometric-fidelity measures. All variables are standardised before clustering.
+The scaler is fit on the original data and applied unchanged to the
+corresponding synthetic dataset, so that all geometric quantities are
+expressed in a common coordinate system; standardising each dataset separately
+would rescale away part of the very distortion the metrics are meant to detect
+(see Section~\ref{sec:limitations}).
+
+\paragraph{Number of groups.}
+For a dataset and an algorithm, the number of groups is estimated by maximising
+the average silhouette width \citep{rousseeuw1987} over candidates
+$\{2,\dots,k_{\max}\}$, with $k_{\max} = \min(k+3, 8)$, the rule inherited
+from \citet{chen2025}. Because this rule ties the search range to the planted
+$k$, every count analysis is repeated with the fixed range $\{2,\dots,8\}$
+(Supplementary Section~S3). We write $\hat{k}_R$ for the estimate obtained from
+an original dataset and $\hat{k}_{S,m}$ for the estimate obtained from the
+$m$-th synthetic dataset generated from it, and $\hat{k}_{R,m}$ for the
+estimate from the original dataset that generated synthetic dataset $m$. For a
+configuration with $M$ evaluations we report two agreement proportions,
+\begin{equation}
+  \mathrm{RR} = \frac{1}{M} \sum_{m=1}^{M}
+    \ind\bigl[\hat{k}_{S,m} = k\bigr],
+  \qquad
+  \mathrm{AG} = \frac{1}{M} \sum_{m=1}^{M}
+    \ind\bigl[\hat{k}_{S,m} = \hat{k}_{R,m}\bigr],
+  \label{eq:sr}
+\end{equation}
+where $\ind[\cdot]$ is the indicator function. The recovery rate $\mathrm{RR}$
+compares the synthetic estimate with the planted number of groups. It
+therefore confounds two sources of failure: distortion introduced by
+synthesis, and the inability of the clustering procedure to recover the
+planted structure even from the original data (for instance, when the groups
+overlap so strongly that a single diffuse cloud is a reasonable description).
+The agreement $\mathrm{AG}$ compares the synthetic estimate with the estimate
+from the original data, obtained with the same algorithm and the same
+selection rule, and thus isolates the effect of synthesis. $\mathrm{AG}$ is the
+primary measure of this study; $\mathrm{RR}$, together with the recovery rate
+of the original data itself, $\ind[\hat{k}_R = k]$, is reported to separate the
+two sources of failure.
+
+\paragraph{Geometric fidelity.}
+The geometric metrics are computed with the number of clusters fixed at the
+planted $k$ on both sides, so that they describe the geometry of the
+partition conditional on the correct count. They require the groups recovered
+in $D_S$ to be matched to those in $D_R$, since cluster labels are arbitrary. We
+build the matrix of pairwise centroid distances between the $k$ original and
+$k$ synthetic clusters and solve the resulting linear assignment problem
+\citep{kuhn1955}, obtaining the one-to-one matching that minimises total
+centroid distance. All fidelity metrics are computed on the aligned clusters.
+
+\paragraph{Group-balance error ($\Delta G$).}
+This metric evaluates whether the distribution of observations across clusters
+is preserved under synthesis. It is defined as
+\begin{equation}
+  \Delta G = \bigl| G_S - G_R \bigr|,
+  \label{eq:dgini}
+\end{equation}
+where $G_R$ and $G_S$ are the Gini coefficients of the cluster-size vectors of
+the partitions recovered from the original and synthetic data. For sizes
+$\{n_1,\dots,n_k\}$,
+\begin{equation}
+  G = \frac{\sum_{a=1}^{k}\sum_{b=1}^{k} |n_a - n_b|}
+           {2k \sum_{a=1}^{k} n_a},
+  \label{eq:gini}
+\end{equation}
+with $G = 0$ for perfectly equal groups. A value of $\Delta G$ close to $0$
+indicates that synthesis has preserved the distribution of cluster sizes.
+Because the planted groups have equal sizes, $G_R$ reflects only the imbalance
+that the algorithm itself produces on the original data.
+
+\paragraph{Mean centroid distance (MCD).}
+This metric measures the average distance between the centroids of the
+original clusters and the centroids of the corresponding synthetic clusters.
+With aligned original and synthetic centroids $\mu_j^R$ and $\mu_j^S$,
+\begin{equation}
+  \mathrm{MCD} = \frac{1}{k} \sum_{j=1}^{k}
+    \bigl\lVert \mu_j^R - \mu_j^S \bigr\rVert ,
+  \label{eq:mcd}
+\end{equation}
+so small values indicate that synthesis preserves the location of the groups.
+
+\paragraph{Mean variance difference (MVD).}
+This metric evaluates whether the synthetic clusters retain a dispersion
+similar to that of the original clusters. Writing $v_j^R$ and $v_j^S$ for the
+mean squared distance of points to their centroid in aligned original and
+synthetic clusters,
+\begin{equation}
+  \mathrm{MVD} = \frac{1}{k} \sum_{j=1}^{k} \bigl| v_j^R - v_j^S \bigr| .
+  \label{eq:mvd}
+\end{equation}
+
+\subsection{Statistical analysis}
+\label{sec:analysis}
+
+The design is hierarchical: $m = 1000$ synthetic datasets are nested within
+each of $n = 5$ original datasets, which are nested within each of the 144
+scenarios. Agreement proportions are reported directly over evaluations.
+Fidelity metrics are aggregated first to a scenario mean and then averaged
+across scenarios, with dispersion reported as a $95\%$ interval (mean $\pm 1.96$
+standard errors) computed from the scenario-level means; using the scenario as
+the unit of replication avoids treating the $m$ synthetic draws from one
+original dataset as independent. Algorithm comparisons use paired Wilcoxon
+signed-rank tests across the 144 scenario-level means. To rank the design
+factors, we fit a main-effects linear model to the 720 replicate-level
+agreement proportions (one per original dataset) and report partial $\eta^2$
+for each factor. As a reference for how much disagreement ordinary sampling
+variability alone would produce, we also compute, within each scenario, the
+proportion of pairs of independent original datasets that yield the same
+$\hat{k}_R$ (Supplementary Section~S4).
+
+For visualisation we use the two-dimensional scenarios, plotting the
+standardised features against each other; no dimensionality reduction is
+applied, so the panels show the geometry the algorithms actually operate on. In
+the paired original/synthetic displays, cluster labels are matched by the same
+Hungarian alignment used for the fidelity metrics and then oriented so that
+colour tracks vertical position consistently across panels.
+
+% =====================================================================
+\section{Results}
+% =====================================================================
+
+\subsection{The block-like artefact}
+
+Figures~\ref{fig:normal} and~\ref{fig:gamma} show a two-dimensional,
+two-group scenario at moderate separation ($\sigma = 2$): the original data in
+the top row and one CART synthetic replicate below, each partitioned by both
+algorithms. Reading across a row shows how the two algorithms divide the same
+cloud; reading down a column shows what synthesis did to that division.
+
+On Normal data (Fig.~\ref{fig:normal}) the overall cluster structure is
+largely preserved after synthesis. Because CART resamples observed values
+within leaves, the synthetic cloud contains repeated coordinates, visible as
+short vertical and horizontal runs of points, most clearly near the edges of
+the range. Both algorithms divide the synthetic cloud along a boundary of
+similar orientation to the one they find in the original, although the Ward
+partition of the synthetic data assigns a visibly smaller share of points to
+the upper group. At $\sigma = 2$ the true groups overlap substantially.
+Neither algorithm reproduces the true labelling exactly: where the true groups
+interpenetrate, both algorithms replace them with a sharp linear boundary
+through the overlap region.
+
+On Gamma data (Fig.~\ref{fig:gamma}) the block-like artefact introduced by
+CART becomes more visible. The original groups are right-skewed, with a dense
+corner and long tails running out along both axes. In the synthetic cloud those
+tails break into discrete, axis-aligned patches, and the dense corner is
+reproduced as a set of rectangular blocks rather than a continuous gradient.
+This is the characteristic artefact of sequential tree synthesis: the
+piecewise-constant leaf structure of Eq.~\eqref{eq:cart} can become more
+apparent for skewed, non-spherical densities. The partitions still divide the
+cloud in roughly the same orientation, but the boundary is displaced and the
+resulting groups have different internal spread, the distortion that the
+fidelity metrics quantify below.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_normal.pdf}
+\caption{Normal (spherical) components: geometry largely preserved under
+  synthesis. Rows are the original data (top) and one CART synthetic replicate
+  (bottom); columns are the true group labels, the $k$-means partition and the
+  Ward partition. In the two partition columns, colours are matched across rows
+  by Hungarian alignment, so the same colour denotes corresponding groups in the
+  original and synthetic panels. The lower-left panel is drawn in a single
+  colour: the group label in the synthetic data is itself synthesised, so it is
+  a prediction from the synthetic features rather than a planted truth, and it
+  has no bijective correspondence with the original groups. Both rows contain
+  the same number of observations ($N = 1000$); the synthetic panels can look
+  sparser only because CART resamples observed values, so that points coincide
+  more often. Scenario: $k = 2$, $p = 2$, $\rho = 0$, $\sigma = 2$.}
+\label{fig:normal}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_gamma.pdf}
+\caption{Gamma (right-skewed) components: the same synthesis mechanism breaks
+  smooth tails into axis-aligned blocks. Panel layout, colour matching, the
+  single-colour lower-left panel and the scenario are as in
+  Fig.~\ref{fig:normal}, and both rows again contain $N = 1000$ observations.
+  Comparing the lower-left panel with the upper-left one shows the artefact
+  directly: the continuous density gradient of the original becomes a set of
+  discrete rectangular patches.}
+\label{fig:gamma}
+\end{figure}
+
+\subsection{Number of groups}
+\label{sec:count}
+
+The number of clusters estimated from synthetic data can be evaluated against
+two references, each addressing a different question
+(Section~\ref{sec:metrics}). Comparison with the planted number of groups
+($\mathrm{RR}$) assesses whether the synthetic data support recovery of the
+underlying truth, and so combines synthesis distortion with the inability of
+the clustering procedure to find the planted structure at all. Comparison with
+the number estimated from the original data ($\mathrm{AG}$) isolates the
+effect of synthesis. Both are reported throughout, and
+Figure~\ref{fig:recovery} shows each against separation, stratified by the true
+number of groups.
+
+Separation is the decisive factor under both references. Against the planted
+number of groups, recovery rises from $0.272$ ($k$-means) and $0.296$ (Ward) at
+$\sigma = 0.1$, through $0.304$ and $0.307$ at $\sigma = 2$, to $0.810$ and
+$0.789$ at $\sigma = 6$ and $0.954$ and $0.950$ at $\sigma = 10$. The
+transition is sharp: up to $\sigma = 2$ recovery is low and dominated by the
+overlap of the groups themselves, while at $\sigma = 10$ it is near-perfect for
+every $k$.
+
+Against the number estimated from the original data the picture is markedly
+more favourable, and the gap is largest exactly where the groups overlap:
+agreement is $0.751$ ($k$-means) and $0.676$ (Ward) at $\sigma = 0.1$, rising
+to $0.983$ and $0.976$ at $\sigma = 10$, for overall agreement of $0.864$ and
+$0.823$. The explanation is that at low separation the algorithms frequently
+fail to recover the planted count from the original data as well: at
+$\sigma = 0.1$, $k$-means finds the true $k$ in only $0.289$ of original
+datasets and Ward in $0.306$. Much of what the first reference records as a
+failure of synthesis is therefore a failure of clustering under overlap, which
+synthesis reproduces faithfully. As a reference point for the size of this
+agreement, two independent original datasets from the same scenario yield the
+same $\hat{k}_R$ in $0.816$ ($k$-means) and $0.772$ (Ward) of pairs; a
+synthetic dataset thus agrees with its parent more often than a fresh sample
+from the same population would, except in the most overlapping regime
+($\sigma = 0.1$), where the two are comparable for Ward and synthetic agreement
+is lower for $k$-means (Supplementary Section~S4).
+
+The number of groups behaves very differently under the two references.
+Against the planted count, recovery is much higher for fewer groups: $0.843$
+for $k$-means at $k = 2$, against $0.473$ at $k = 3$ and $0.439$ at $k = 4$;
+in the overlapping regime the three- and four-group cases are almost never
+recovered, yet they exceed $0.90$ once $\sigma = 10$. Against the original
+data, this pattern largely disappears ($0.885$, $0.863$ and $0.844$). The
+difficulty of larger $k$ thus lies mainly in the clustering problem, which
+synthesis reproduces, rather than in synthesis itself. The partial $\eta^2$
+values from the main-effects model make the contrast explicit: for the planted
+reference, separation ($0.55$ for $k$-means, $0.57$ for Ward) and $k$ ($0.31$
+and $0.37$) dominate, whereas for agreement with the original data separation
+($0.20$ and $0.21$) is followed by correlation ($0.10$ and $0.07$) and
+distribution family ($0.03$ and $0.10$), with $k$ below $0.01$.
+Table~\ref{tab:factors} reports the marginal means for every design factor
+under both references.
+
+Two further patterns in Table~\ref{tab:factors} deserve comment. Agreement
+with the original data is higher for correlated components ($0.929$ versus
+$0.800$ for $k$-means) and does not decline with dimensionality. The second of
+these should not be read as evidence that synthesis is easier in higher
+dimensions: at $p = 10$ and $\sigma \le 2$ the silhouette criterion selects
+$\hat{k}_R = 2$ for $87$--$90\%$ of original datasets ($k$-means), so original
+and synthetic estimates coincide largely because both collapse onto the
+smallest candidate. The distribution family produces a consistent gap under
+both references, which Section~\ref{sec:distribution} examines.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_recovery.pdf}
+\caption{Cluster-count agreement between synthetic and original data, against
+  separation and stratified by the true number of groups, under two reference
+  conventions. (a) Agreement with the number of groups planted by the
+  simulation ($\mathrm{RR}$). (b) Agreement with the number a clustering
+  algorithm recovers from the original data ($\mathrm{AG}$). In panel (a),
+  agreement is low while the groups overlap (shaded) for $k \ge 3$ and
+  moderate for $k = 2$; panel (b) stays high throughout and depends far less on
+  $k$, because in the overlapping regime the algorithms often fail to recover
+  the planted count from the original data as well, so both sides of the
+  comparison deviate from the truth in the same way. The two algorithms track
+  each other closely under (a) and separate under (b). Both panels use all
+  $720{,}000$ original--synthetic pairs.}
+\label{fig:recovery}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Agreement in the number of groups by design factor, over the full
+         720{,}000-evaluation design, under the two references of
+         Eq.~\eqref{eq:sr}: the planted number of groups ($\mathrm{RR}$) and
+         the number estimated from the original data ($\mathrm{AG}$). Each
+         entry is a marginal mean over all other factors. Candidate range
+         $\{2,\dots,\min(k+3,8)\}$; the fixed-range analysis is in
+         Supplementary Table~S2.}
+\label{tab:factors}
+\small
+\begin{tabular}{llrrrr}
+\toprule
+ & & \multicolumn{2}{c}{Planted $k$ (RR)} & \multicolumn{2}{c}{Original $\hat{k}_R$ (AG)} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Factor & Level & $k$-means & Ward & $k$-means & Ward \\
+\midrule
+Separation $\sigma$ & $0.1$   & 0.272 & 0.296 & 0.751 & 0.676 \\
+                    & $2$     & 0.304 & 0.307 & 0.797 & 0.759 \\
+                    & $6$     & 0.810 & 0.789 & 0.926 & 0.882 \\
+                    & $10$    & 0.954 & 0.950 & 0.983 & 0.976 \\
+\addlinespace
+Number of groups $k$ & $2$    & 0.843 & 0.860 & 0.885 & 0.841 \\
+                     & $3$    & 0.473 & 0.459 & 0.863 & 0.812 \\
+                     & $4$    & 0.439 & 0.437 & 0.844 & 0.816 \\
+\addlinespace
+Dimensionality $p$ & $2$      & 0.616 & 0.623 & 0.843 & 0.770 \\
+                   & $5$      & 0.561 & 0.569 & 0.866 & 0.819 \\
+                   & $10$     & 0.578 & 0.564 & 0.884 & 0.880 \\
+\addlinespace
+Correlation $\rho$ & $0$      & 0.571 & 0.578 & 0.800 & 0.763 \\
+                   & $0.4$    & 0.599 & 0.592 & 0.929 & 0.884 \\
+\addlinespace
+Distribution $F$ & Normal     & 0.604 & 0.610 & 0.896 & 0.898 \\
+                 & Gamma      & 0.565 & 0.561 & 0.833 & 0.749 \\
+\midrule
+Overall & & 0.585 & 0.585 & 0.864 & 0.823 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Geometric fidelity}
+
+Figure~\ref{fig:fidelity} traces two of the geometric-fidelity metrics against
+separation. Mean centroid distance falls steeply as groups separate, from
+$0.60$ ($k$-means) and $0.86$ (Ward) at $\sigma = 0.1$ to $0.09$ and $0.10$ at
+$\sigma = 10$, because well-separated groups pin their centroids robustly
+regardless of the local block artefact. Mean variance difference also
+declines, more gradually, from $0.35$ and $0.61$ to $0.11$ and $0.13$. Across
+all separation levels and for both metrics, $k$-means lies below Ward: it is
+the geometrically more conservative estimator under synthesis. Over the 144
+scenarios, $k$-means has the lower MCD in 133 and the lower MVD in all 144
+(paired Wilcoxon $p < 10^{-20}$ for both). The intervals overlap at
+$\sigma \ge 6$, where both methods yield values close to zero.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_fidelity.pdf}
+\caption{Geometric fidelity against separation. Points show the mean of the 36
+  scenario-level means at each separation level; bands are $95\%$ intervals
+  computed across those scenarios. Left: mean centroid distance. Right: mean
+  variance difference. Both panels share the vertical scale. Both metrics
+  decline as groups separate, and $k$-means remains below Ward throughout.}
+\label{fig:fidelity}
+\end{figure}
+
+Total dispersion distortion grows with dimensionality.
+Figure~\ref{fig:balance}(a) shows MVD rising with the number of variables: for
+$k$-means from $0.06$ ($95\%$ interval $0.05$--$0.08$) at $p = 2$ to $0.39$
+($0.32$--$0.47$) at $p = 10$, and for Ward from $0.13$ to $0.65$. Because $v_j$
+in Eq.~\eqref{eq:mvd} is a sum of squared deviations over the $p$ coordinates,
+this growth should be read per coordinate: $\mathrm{MVD}/p$ is roughly constant
+($k$-means $0.032$, $0.040$ and $0.039$ at $p = 2, 5, 10$; Ward $0.067$,
+$0.078$ and $0.065$). Each synthesised coordinate therefore contributes a
+similar amount of dispersion distortion, and the total accumulates with $p$ as
+the axis-aligned leaf structure of Eq.~\eqref{eq:cart} is repeated in every
+dimension. Unlike the count, which is protected at high $p$ by the collapse of
+$\hat{k}$ onto small values (Section~\ref{sec:count}), the within-cluster
+dispersion is measured at the planted $k$ and so exposes this accumulation
+directly.
+
+Figure~\ref{fig:balance}(b) shows the group-balance error $\Delta G$ by
+distribution family. Both algorithms preserve cluster sizes better on Normal
+than on Gamma data ($k$-means $0.028$ versus $0.032$; Ward $0.057$ versus
+$0.065$), consistent with the block artefact being more disruptive on skewed
+groups. More striking is that $k$-means yields systematically lower and less
+variable $\Delta G$ than Ward for both distributions (lower in 138 of 144
+scenarios; overall $0.030$ versus $0.061$). Because the planted groups have
+equal sizes, this difference does not reflect the preservation of a genuine
+imbalance; it shows that the cluster sizes of a $k$-means partition fluctuate
+less under synthesis. This is consistent with the known tendency of the
+$k$-means criterion to produce clusters of similar size \citep{xiong2009}.
+Ward's linkage uses a related sum-of-squares criterion, but its greedy,
+irreversible merges let local density irregularities created by the block
+artefact move whole subsets of points between clusters. Whether $k$-means would
+also understate a genuine size imbalance cannot be tested with balanced
+groups, and is left to future work (Section~\ref{sec:future}).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_balance.pdf}
+\caption{(a) Mean variance difference by dimensionality: total distortion
+  accumulates as dimensions are added, more so for Ward; per coordinate it is
+  roughly constant (see text). (b) Group-balance error
+  $\Delta G$ by distribution family: $k$-means produces lower and less variable
+  balance error for both distributions. Bars are means of scenario-level means;
+  error bars are $95\%$ intervals computed across scenarios.}
+\label{fig:balance}
+\end{figure}
+
+\subsection{Distribution family}
+\label{sec:distribution}
+
+The distribution family is the factor that exposes the CART artefact most
+directly. Figure~\ref{fig:distribution} stratifies count agreement by
+distribution and separation under both references, and the two panels tell
+different stories. Against the planted number of groups (panel a), the two
+families show similar recovery while the groups overlap and diverge at
+intermediate separation: at $\sigma = 6$, $k$-means recovers the planted count
+$86.2\%$ of the time for Normal data but only $75.9\%$ for Gamma data (Ward:
+$84.6\%$ versus $73.3\%$). Almost all of this gap, however, is already present
+in the original data, where the planted count is recovered in $90.0\%$ versus
+$80.0\%$ of datasets ($k$-means; Ward $91.1\%$ versus $78.9\%$). It therefore
+reflects mainly how difficult skewed groups are to cluster, not what synthesis
+does to them.
+
+Against the original data (panel b), which isolates synthesis, the Gamma
+penalty is concentrated where the groups overlap and is much larger for Ward.
+At $\sigma = 0.1$, Ward's agreement is $0.806$ for Normal but only $0.545$ for
+Gamma data, and at $\sigma = 2$ it is $0.878$ versus $0.639$; the
+corresponding values for $k$-means are $0.765$ versus $0.737$ and $0.888$
+versus $0.707$. At $\sigma = 6$ the gap narrows ($k$-means $0.947$ versus
+$0.906$; Ward $0.924$ versus $0.841$), and by $\sigma = 10$ it has closed, as
+separation overwhelms the artefact.
+
+This addresses the first objective. CART preserves the structure needed to
+recover the number of groups well on Normal data, but its hardening of skewed
+densities is associated with lower agreement on Gamma data, most markedly when
+groups are not well separated and for the hierarchical method.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_distribution.pdf}
+\caption{Cluster-count agreement by distribution family and separation, under
+  the two references. (a) Versus the planted number of groups: the two
+  families show similar recovery while groups overlap and diverge at
+  intermediate separation, where recovery is lower for Gamma data for both
+  algorithms. (b) Versus the number recovered from the original data: the
+  Gamma penalty attributable to synthesis is largest in the overlapping regime
+  and for Ward.}
+\label{fig:distribution}
+\end{figure}
+
+\subsection{Agreement between the two algorithms}
+
+Whether the two methods differ in robustness to synthetic distortion was the
+third objective, and the answer depends on the reference. Against the planted
+number of groups the two are indistinguishable: overall recovery is $0.585$
+for both, a paired Wilcoxon signed-rank test across the 144 scenario-level
+means finds no significant difference ($W = 3300$, $p = 0.39$), and the two
+algorithms reach the same outcome in $92.0\%$ of individual evaluations.
+Against the original data, which isolates synthesis, $k$-means is more stable:
+overall agreement is $0.864$ versus $0.823$, $k$-means is higher in 95 of the
+144 scenarios (24 ties), and the paired test is significant ($W = 1665$,
+$p < 0.001$). The conclusion is unchanged under the fixed candidate range
+(Supplementary Section~S3). Together with the geometric results, this
+indicates that $k$-means is the more robust of the two methods to CART
+synthesis, whereas the prior expectation that a hierarchical method would be
+more robust is not supported.
+
+As a complementary check on internal cohesion, the difference in mean
+silhouette width between synthetic and original partitions is small and
+centred near zero at every separation (within $\pm 0.012$). The absolute
+levels are nearly identical ($k$-means $0.396$ versus $0.397$; Ward $0.376$
+versus $0.377$), suggesting that the apparent clustering quality is similar
+before and after synthesis. This is reassuring, but it also means that
+silhouette alone would fail to flag the geometric distortions the other
+metrics detect, an instructive negative result for anyone tempted to validate
+a synthetic release with an internal index.
+
+% =====================================================================
+\section{Discussion}
+% =====================================================================
+
+This study evaluated whether CART-generated synthetic data preserve the
+structural properties that cluster analysis relies on, comparing $k$-means and
+Ward's hierarchical clustering across a 144-scenario factorial design and
+720{,}000 synthetic-versus-original evaluations. Four findings emerge.
+
+First, separation dominates agreement in the number of groups. Agreement with
+the original data rises from $0.75$ ($k$-means) when the groups overlap to
+$0.98$ when they are well separated, and recovery of the planted count rises
+from roughly $0.27$ to above $0.95$. The number of groups strongly affects
+recovery of the planted count (higher at $k = 2$, $0.84$, and lower at
+$k \ge 3$, below $0.48$) but has little effect on agreement between original
+and synthetic estimates. Overall, recovery is highest for simpler cluster
+structures, with well-separated and fewer groups, and lowest for more complex
+structures, with overlap and a larger number of groups; most of the effect of
+$k$, however, is a property of the clustering problem that synthesis
+reproduces rather than a distortion that synthesis introduces.
+
+Second, we found no significant difference between the two algorithms in
+recovery of the planted count ($0.585$ versus $0.585$; $p = 0.39$), but
+$k$-means is the more stable of the two when synthetic estimates are compared
+with those from the original data ($0.864$ versus $0.823$; $p < 0.001$). The
+same ordering holds for the geometry: $k$-means shows lower centroid and
+variance distortion at every separation and smaller fluctuations in cluster
+sizes. For an applied analyst, the practical implication is that the choice of
+algorithm matters more for the fidelity of a synthetic-data analysis than
+accuracy against a ground truth would suggest. It also raises a question that
+this design cannot answer: because the $k$-means criterion favours clusters of
+similar size, a $k$-means analysis of synthetic data may understate a genuine
+imbalance, which only a design with unequal group sizes can test.
+
+Third, CART is not utility-neutral, and its performance depends on the
+underlying distribution. On Normal data it is close to neutral; on skewed
+Gamma data it hardens smooth density gradients into axis-aligned blocks,
+visibly distorting geometry and being associated with lower agreement,
+particularly for Ward's linkage and when groups overlap. Total dispersion
+distortion grows with dimensionality, because each synthesised coordinate
+contributes a similar amount of distortion.
+
+Fourth, and methodologically, an internal validity index is not a sufficient
+check. Silhouette values remain almost unchanged even where centroid and
+dispersion fidelity degrade substantially. A practitioner who validates a
+synthetic release by confirming that its silhouette profile matches the
+original may conclude that structure is intact in precisely the settings where
+this analysis shows it is not. A related methodological point concerns the
+reference: the planted truth, the natural choice in a simulation, answers a
+different question from the one a data holder faces, and in this study it
+masked the difference between the two algorithms.
+
+An interesting corollary of the design is that clustering can be read in the
+other direction, as an instrument rather than an object of study. Because a
+partition responds to local density, separability and dispersion
+simultaneously, the agreement between partitions recovered from original and
+synthetic data functions as a sensitive summary of geometric resemblance, one
+that reacts to distortions which marginal and bivariate checks may not detect.
+We did not pursue this here, but the metrics of Section~\ref{sec:metrics} could
+be repurposed as general-utility diagnostics rather than task-specific ones.
+
+\subsection{Relation to previous work}
+
+The study extends \citet{chen2025} in three ways: a structurally distinct
+second algorithm, a skewed distribution family that exposes tree-synthesis
+artefacts, and structural metrics that compare partitions recovered from the
+original and synthetic data. The conclusion that CART is a reasonable default
+for well-behaved data but degrades on skewed distributions is consistent with
+the broader \texttt{synthpop} literature \citep{nowok2016,snoke2018}, and the
+qualitative block artefact matches the known axis-aligned bias of sequential
+tree synthesis. The finding that utility rankings depend on the downstream task
+echoes benchmarking work in the health-records setting
+\citep{yan2022,elemam2022}, where the same generator changes position depending
+on which analysis is used to score it, and an applied study of wearable
+physiological data in mental-health monitoring similarly found that the
+clustering utility of \texttt{synthpop} releases depends on the synthesis
+settings \citep{vidiella2025}. The greater sensitivity of Ward's linkage to
+perturbation of the data is in line with the classical robustness comparisons
+of \citet{milligan1980}. A parallel question arises when values are missing
+rather than synthesised: \citet{aschenbruck2023} evaluate how imputation
+strategies affect the clusters subsequently recovered from mixed-type data, and
+reach a structurally similar conclusion, that the imputation model and the
+clustering method interact and cannot be assessed in isolation. Since CART
+underlies both sequential synthesis and widely used non-parametric imputation,
+the two literatures are closer than their vocabularies suggest.
+
+\subsection{Limitations}
+\label{sec:limitations}
+
+The evaluation uses controlled simulations with known ground truth rather than
+real data. This isolates mechanisms cleanly but limits direct generalisation to
+data with missingness, mixed types, unequal group sizes and unknown
+data-generating processes. The generator is limited to CART with a single
+parameterisation (minimum leaf size ten, fixed variable order) and the
+algorithms to $k$-means and Ward; density-based and model-based clustering,
+other synthesis settings, and parametric or deep generative synthesisers, may
+behave differently. Sample size was fixed at $N = 1000$, so small-sample
+behaviour is unexamined. The number of groups is selected by the silhouette
+criterion over $\hat{k} \ge 2$, so a single-cluster solution can never be
+chosen, even when the groups overlap so strongly that one cluster is the most
+reasonable description; other selection rules \citep{milligan1985} may
+respond differently to synthesis. Finally, count agreement is inflated where
+the estimator collapses onto a small number of candidate values, as happens at
+high $p$ and low $\sigma$, and should be read together with the geometric
+metrics.
+
+Two conventions in the definition of MCD and MVD deserve emphasis, because both
+affect the numbers themselves and not only their interpretation. The first is
+what the metrics compare. Here they compare the partition recovered from the
+original data against the partition recovered from the synthetic data, which is
+the quantity a claim about synthesis requires; the superficially similar
+practice of comparing a recovered partition against the planted labels of the
+same dataset measures clustering accuracy instead, and carries no information
+about the generator. The second is scale. Both metrics are computed after
+standardising with a scaler fit on the original data and applied unchanged to
+the synthetic data, so both are expressed in units of the original feature
+scale. Standardising each dataset separately rescales away part of the
+distortion the metrics are meant to capture, and omitting standardisation
+altogether makes MVD track absolute cluster spread (which grows with $\sigma$
+by construction), so that the metric rises with separation when what it is
+measuring is the design parameter. Absolute values of MCD and MVD are therefore
+not comparable across studies that differ in either convention, and any
+replication should state both explicitly. Both metrics are also unnormalised sums over
+coordinates, so their absolute values grow with $p$ even at constant
+per-coordinate distortion; comparisons across dimensionality should use
+per-coordinate or relative versions.
+
+\subsection{Future work}
+\label{sec:future}
+
+The central lesson generalises beyond the specific methods studied: synthetic
+data utility is task-relative, and a generator that preserves marginal
+resemblance need not preserve the higher-order geometry a clustering workflow
+depends on. Practically, the results argue for validating structural fidelity
+(distances, dispersion, separability, balance) against the intended analysis,
+and for treating a clustering comparison as a more demanding resemblance check
+than marginal summaries can provide. Natural extensions include other
+synthesisers (parametric mixtures, copulas, deep generative models) and other
+CART settings, non-convex and density-based clustering, unequal group sizes,
+varying $N$ to probe small-sample behaviour, and chance-corrected partition
+comparisons such as the adjusted Rand index \citep{hubert1985} computed on a
+common set of points. A promising direction is to model the discrepancy
+$\Delta$ of Eq.~\eqref{eq:discrepancy} directly as a learned function of the
+design factors, turning the utility surface itself into a predictive tool.
+
+As a concrete next step, we propose applying the framework to the wearable
+dataset described in \citet{vidiella2025}, to which we have direct access.
+Beyond providing a real-data test of the present design, this dataset would
+allow a comparison that neither study can perform alone. The present work
+evaluates synthesis as substitution, in which the synthetic dataset replaces
+the original. The applied study instead evaluates augmentation, in which the
+synthetic records are appended to the real ones and the union is clustered.
+These are different operations, and their effects are currently confounded
+with sample size: doubling the number of observations alters neighbourhood
+parameters and silhouette values independently of any distortion introduced by
+the generator. A three-way comparison of the partitions recovered from the real
+data, from the synthetic data alone, and from the augmented set, evaluated with
+the same metrics used here, would separate the effect of the generator from
+the effect of the additional sample. It would also make it possible to test
+whether the parameterisation of the generator, rather than the generator
+itself, accounts for the block artefact documented in this paper, since the
+applied study reports a substantial improvement in utility after replacing
+CART with conditional inference trees \citep{hothorn2006} and increasing the
+minimum leaf size. We regard this comparison as a natural continuation of the
+present study and as a practical way of establishing which of its conclusions
+generalise beyond the simulated setting.
+
+% =====================================================================
+\section{Conclusions}
+% =====================================================================
+
+In our view, the main contribution of this study is that its discrepancy
+framework does not depend on the simulation that illustrates it. The quantity
+$\Delta(\theta_R, \theta_S)$ is defined for any reference dataset and any
+generator, and the five factors varied here all have direct empirical
+counterparts: separation corresponds to how distinct the underlying groups
+are, the number of groups to the number of latent subpopulations,
+dimensionality to the number of recorded variables, correlation to the
+dependence between features, and the distribution family to the shape of the
+observed densities. The simulation fixes these factors by construction, but in
+an applied dataset they can be measured. This means the framework can be
+transferred to real data without modification, and we believe such a transfer
+would be informative rather than merely confirmatory. Real datasets occupy
+regions of the design space that the present grid does not reach. Behavioural
+and physiological measurements routinely show correlations above $0.95$
+between related features, well beyond the maximum of $\rho = 0.4$ examined
+here, and skewness values considerably higher than those produced by the Gamma
+family. They also exhibit properties the simulation excludes altogether, such
+as strongly unbalanced group sizes, ambiguous missingness in which a zero may
+indicate either genuine inactivity or a non-worn device, and heterogeneity
+between individuals. Each of these is a plausible source of additional
+distortion under sequential tree synthesis, and each would help to refine the
+conclusions reported here. We consider the unbalanced case particularly
+relevant, because the group-balance error $\Delta G$ and the hypothesis that
+the $k$-means criterion understates imbalance can only be fully tested when a
+substantial imbalance is present in the reference data.
+
+Within the region of the design space studied here, synthetic data generated
+with CART can reproduce the appearance of clustering structure while subtly
+reshaping its geometry. Both algorithms recover well-separated structure
+reliably and struggle together when groups overlap; where they diverge is in
+how faithfully each reproduces, on synthetic data, the partition it would have
+found on the original data, and in the geometric bias each imprints on the
+recovered partition. The utility of synthetic data for clustering is therefore
+best understood not as a property of the data but as a property of the
+data--generator--algorithm triple, to be verified rather than assumed.
+
+\backmatter
+
+\bmhead{Supplementary information}
+The online supplementary material contains the recovery heatmap by number of
+groups and separation, the contingency table of original versus synthetic
+estimates, the sensitivity analysis for the candidate range of $\hat{k}$, and
+the independent-resampling baseline.
+
+\section*{Declarations}
+
+\noindent \textbf{Funding:} [To be completed by the authors.]
+
+\noindent \textbf{Competing interests:} [To be completed by the authors.]
+
+\noindent \textbf{Data availability:} All data analysed in this study are
+  simulated; they can be regenerated exactly from the configuration file and
+  seeds distributed with the code.
+
+\noindent \textbf{Code availability:} The full pipeline, from data generation
+  through to the figures and tables reported here, is available at
+  \url{https://github.com/Sterrysx/synthetic-clustering}. Every stage is driven
+  from a single configuration file and can be re-executed end to end.
+
+\noindent \textbf{Author contributions:} [To be completed by the authors.]
+
+\bibliography{refs}
+
+\begin{appendices}
+
+\section{Clustering objectives}
+\label{app:algorithms}
+
+$k$-means partitions $N$ observations $\{x_i\}_{i=1}^N$, $x_i \in
+\mathbb{R}^p$, into $k$ non-overlapping groups by minimising the within-cluster
+sum of squares \citep{macqueen1967}. Writing $\mathcal{C} = \{C_1,\dots,C_k\}$
+for the partition and $\mu_j$ for the centroid of $C_j$,
+\begin{equation}
+  \arg\min_{\mathcal{C}} \sum_{j=1}^{k} \sum_{x_i \in C_j}
+    \lVert x_i - \mu_j \rVert^2,
+  \qquad
+  \mu_j = \frac{1}{|C_j|}\sum_{x_i \in C_j} x_i .
+  \label{eq:wcss}
+\end{equation}
+Lloyd's iteration alternates assignment and update steps until the partition
+stabilises, converging to a local optimum.
+
+Hierarchical clustering builds a dendrogram by successive merging
+\citep{ward1963}. Each observation begins as a singleton; at every step the two
+clusters whose merger least increases the total within-cluster error sum of
+squares are combined. With
+\begin{equation}
+  \mathrm{ESS} = \sum_j \sum_{x_i \in C_j} \lVert x_i - \mu_j \rVert^2,
+  \qquad
+  \Delta_{\text{Ward}}(C_a, C_b)
+    = \frac{|C_a|\,|C_b|}{|C_a| + |C_b|}\,
+      \lVert \mu_a - \mu_b \rVert^2 ,
+  \label{eq:ward}
+\end{equation}
+a flat partition into $k$ groups is obtained by cutting the dendrogram at the
+corresponding height.
+
+\section{Computational complexity and cost}
+\label{app:complexity}
+
+This appendix states what the study costs to run and why. Throughout, $N$ is the
+sample size, $p$ the dimensionality, $k$ the number of groups, $I$ the number of
+Lloyd iterations to convergence, $K = 7$ the number of candidate values of
+$\hat{k}$, and $A = 2$ the number of algorithms.
+
+\subsection{Cost of the components}
+
+Table~\ref{tab:complexity} collects the asymptotic cost of each component
+together with the number of times the executed design invokes it. The
+invocation counts follow from the design: $144$ scenarios $\times\ n = 5$
+replicates $= 720$ units, each with $m = 1000$ synthetic draws, giving
+$720{,}000$ original--synthetic pairs.
+
+\begin{table}[h]
+\centering
+\caption{Cost per invocation and invocation count. Exact minimisation of the
+         $k$-means objective is NP-hard in general and remains so for $k = 2$
+         in arbitrary dimension \citep{inaba1994}, so Lloyd's local-search
+         heuristic \citep{lloyd1982} is used, restarted ten times.}
+\label{tab:complexity}
+\small
+\begin{tabular}{llr}
+\toprule
+Component & Cost per invocation & Invocations \\
+\midrule
+CART synthesis \citep{breiman1984}      & $O(p^{2} N \log N)$ & $1.44 \times 10^{5}$ \\
+Lloyd iteration \citep{macqueen1967,lloyd1982} & $O(IkNp)$, $\times 10$ restarts & $5.77 \times 10^{6}$ \\
+Ward linkage \citep{ward1963,murtagh2017}      & $O(N^{2} p)$ time, $O(N^{2})$ space & $5.77 \times 10^{6}$ \\
+Silhouette \citep{rousseeuw1987}               & $O(N^{2} p)$ & $1.15 \times 10^{7}$ \\
+Hungarian alignment \citep{kuhn1955,jonker1987} & $O(k^{3})$ & $1.44 \times 10^{6}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two structural facts follow. First, the \emph{binding} term is $O(N^{2}p)$,
+contributed by Ward's linkage and by the silhouette, and it is a property of the
+sample size rather than of the design: doubling $N$ quadruples the work, whereas
+doubling $m$ or the number of scenarios only doubles it. The $O(N^{2})$ working
+set of the linkage is also what caps $N$ in practice, since each worker holds
+its own distance structure; at $N = 1000$ this is roughly $8$~MB per worker and
+irrelevant, at $N = 10^{4}$ it is $800$~MB and binding. Second, model selection
+dominates the fit count: estimating $\hat{k}$ costs $K$ fits and $K$ silhouette
+evaluations per algorithm per dataset, so the fidelity stage performs
+$720 \times A(K{+}1) + 720{,}000 \times A(K{+}1) = 1.15 \times 10^{7}$
+clustering fits rather than the $1.44 \times 10^{6}$ that fitting at a single
+known $k$ would require. Where a cheaper formulation exists we did not pursue
+it: Ward admits an $O(N^{2})$ nearest-neighbour-chain implementation
+\citep{murtagh2017,mullner2011} and $k$-means can be seeded to bound its
+expected error \citep{arthur2007}, so the figures below are conservative
+relative to a tuned implementation.
+
+One algorithmic choice does change the constant materially. The partition of
+each original dataset is computed once per replicate and reused across that
+replicate's $1000$ draws. Computing it inside the draw loop would multiply the
+original-side work by $10^{3}$ and produce identical output, since the original
+data do not vary within a replicate.
+
+\subsection{Parallel execution}
+
+The design is a set of independent units, so the computation is
+embarrassingly parallel in the strict sense: no communication, no shared mutable
+state, and a serial fraction confined to reading configuration and writing the
+merged result. Amdahl's law is therefore not the operative constraint at this
+scale; hardware contention is, and the implementation targets three specific
+sources of it.
+
+\emph{Thread oversubscription.} The clustering routines call into BLAS, which by
+default spawns one thread per core \emph{inside each worker}. With $P$ worker
+processes this creates $P \times C$ runnable threads on $C$ cores, and the
+resulting context-switching and cache thrashing dominate the useful work. All
+three stages therefore pin \texttt{OMP\_NUM\_THREADS},
+\texttt{OPENBLAS\_NUM\_THREADS} and \texttt{MKL\_NUM\_THREADS} to $1$ before
+importing any numerical library, leaving parallelism entirely to the process
+pool. The effect is not marginal: on the reference machine, $18$ concurrent
+workers each running an identical model-selection scan complete in $1.9$~s with
+threads pinned and $84.5$~s without, a factor of $44$.
+
+\emph{Load imbalance.} Unit cost varies with $p$ and $k$, so a static partition
+of the task list leaves workers idle at the tail. The synthesis stage instead
+uses a work-stealing queue: tasks are serialised into a spool directory and each
+worker claims one by \texttt{rename(2)} into a \emph{doing} directory. Rename
+within a filesystem is atomic, so exactly one worker can win a given task and no
+lock is required. Workers pull candidates in batches of $200$ rather than
+listing the spool per task, which at $1.44 \times 10^{5}$ tasks reduces
+directory-scan overhead from hours to seconds. The Python stages achieve the
+same effect through a dynamically scheduled pool.
+
+\emph{Restart cost.} Each unit checkpoints its own result on completion, so an
+interrupted run resumes at the last completed unit rather than from the start.
+At a stage cost of several hours this converts a failure from a total loss into
+the loss of the units in flight.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_scaling.pdf}
+\caption{Strong scaling of the model-selection workload on the reference
+         machine, $72$ independent units, BLAS pinned to one thread per worker.
+         Scaling is near-linear to $8$ workers ($6.9\times$, $87\%$ efficiency)
+         and the knee falls at $12$, the physical core count. Beyond it the
+         additional workers occupy SMT siblings that share execution units with
+         an already-saturated core, so throughput still rises but efficiency
+         falls to $56\%$ at $18$ workers and $45\%$ at $24$. The production runs
+         use $18$: past the efficiency knee, but chosen for wall time on an
+         otherwise idle machine. The efficiency figure is not a curiosity: at
+         $56\%$, the clustering stage costs $3.6$~h rather than the $2.0$~h that
+         dividing its serial cost by $18$ would suggest.}
+\label{fig:scaling}
+\end{figure}
+
+Figure~\ref{fig:scaling} shows the measured strong-scaling curve. The shape is
+the expected one for a compute-bound, memory-light workload on a simultaneous
+multithreading processor, and it makes the operating point explicit: $18$
+workers buy a $10.0\times$ speed-up over serial execution, while $12$ would give
+$8.8\times$ at much better efficiency. Neither choice is a contribution; the
+point of measuring is that the default of one worker per hardware thread is not
+obviously right, and here it is not.
+
+\subsection{Measured cost}
+
+\begin{table}[h]
+\centering
+\caption{Wall-clock cost at $m = 1000$ on an AMD Ryzen~9 9900X (12~cores,
+         24~threads, $46$~GiB) with $18$ workers. The evidence differs by row
+         and is stated rather than blurred: the fidelity stage is instrumented;
+         synthesis is the interval over which its $1.44 \times 10^{5}$ outputs
+         were written, so it includes any idle time inside that interval; the
+         clustering stage was not instrumented, so its entry is a measurement
+         on a uniform random sample of $3000$ of its $1.44 \times 10^{5}$ inputs,
+         run at the same worker count, scaled to the full set; this is consistent
+         with the loose upper bound of $5.6$~h implied by its output
+         timestamps.}
+\label{tab:cost}
+\small
+\begin{tabular}{llrr}
+\toprule
+Stage & Evidence & Wall time & Unit cost \\
+\midrule
+Synthesis ($1.44 \times 10^{5}$ datasets) & write interval & $1.24$ h & $31$ ms/dataset \\
+Clustering ($7.2 \times 10^{5}$ pairs)    & sampled        & $\approx 3.6$ h & $\approx 18$ ms/pair \\
+Fidelity ($1.15 \times 10^{7}$ fits)      & instrumented   & $4.44$ h & $1.4$ ms/fit \\
+\midrule
+Total & & $\approx 9.3$ h & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The synthetic datasets occupy $21$~GB as uncompressed Parquet. Cost is linear in
+$m$: the same design at $m = 100$ completes in about a tenth of the time and
+reproduces every estimate reported here to within $0.025$, so the larger run
+buys precision rather than a change in any conclusion.
+
+
+\end{appendices}
+
+\end{document}

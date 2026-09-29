@@ -1,0 +1,64 @@
+% =====================================================================
+%  blind.tex -- double-anonymous switch for the JoC submission
+%  (JoC "uses a double-blind peer-reviewing system").
+%
+%  Usage: \input{blind} in the preamble (after \documentclass and, if used,
+%  joc_referee.tex / joc_bib.tex).  Blind mode is ON by default.  To build the
+%  non-anonymous version either change \blindtrue to \blindfalse below, or,
+%  without editing anything, compile with
+%      pdflatex '\def\SetBlind{false}\input{main_blind.tex}'   (see test/)
+%
+%  Commands
+%    \ifblind ... \else ... \fi   raw switch, for larger blocks
+%    \blindalt{blind text}{real text}
+%                                 typesets the first argument in blind mode,
+%                                 the second otherwise
+%    \blindhide{text}             drops text in blind mode (nothing printed)
+%    \blindremoved{what}          prints "[what removed for anonymous review]"
+%                                 in blind mode, nothing otherwise
+%    \repourl                     \url of the code repository: the real URL
+%                                 (\realrepourl) or the anonymised mirror
+%                                 (\anonrepourl) in blind mode
+%  Author block: in blind mode \author, \affil, \email, \orcid, \equalcont,
+%  \corrauthor are swallowed, and a single neutral line is printed instead,
+%  so the \author/\affil lines in the document do not need to be touched.
+%  PDF metadata: pdfauthor is cleared in blind mode.
+% =====================================================================
+\newif\ifblind
+\ifdefined\SetBlind \csname blind\SetBlind\endcsname \else \blindtrue \fi
+%
+% --- repository URLs (edit the placeholder once the anonymous mirror exists)
+\newcommand\realrepourl{https://github.com/Sterrysx/synthetic-clustering}
+\newcommand\anonrepourl{https://anonymous.4open.science/r/XXXX}
+\newcommand\repourl{\ifblind\expandafter\url\expandafter{\anonrepourl}%
+                    \else\expandafter\url\expandafter{\realrepourl}\fi}
+%
+% --- inline helpers
+\newcommand\blindalt[2]{\ifblind#1\else#2\fi}
+\newcommand\blindhide[1]{\ifblind\else#1\fi}
+\newcommand\blindremoved[1]{\ifblind[#1 removed for anonymous review]\fi}
+%
+% --- author block
+\makeatletter
+% (\newif must sit outside \ifblind: an undefined \if... inside a skipped
+% branch would let its \else/\fi pair with \ifblind)
+\newif\ifjoc@authorprinted \joc@authorprintedfalse
+\ifblind
+  \let\joc@origauthor\author
+  % first \author call prints a neutral placeholder, the rest are swallowed
+  % (starred forms, e.g. \author*[1]{...} for the corresponding author, too)
+  \newcommand\joc@blindauthor[2][]{%
+    \ifjoc@authorprinted\else
+      \global\joc@authorprintedtrue
+      \joc@origauthor{Author details removed for anonymous review}%
+    \fi}
+  \newcommand\joc@blindaffil[2][]{}
+  \def\author{\@ifstar\joc@blindauthor\joc@blindauthor}
+  \def\affil{\@ifstar\joc@blindaffil\joc@blindaffil}
+  \providecommand\email[1]{}\renewcommand\email[1]{}
+  \providecommand\orcid[1]{}\renewcommand\orcid[1]{}
+  \providecommand\equalcont[1]{}\renewcommand\equalcont[1]{}
+  \providecommand\corrauthor[1]{}
+  \AtBeginDocument{\hypersetup{pdfauthor={},pdfkeywords={}}}
+\fi
+\makeatother

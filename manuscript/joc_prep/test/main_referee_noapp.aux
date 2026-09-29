@@ -1,0 +1,158 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\bibstyle{sn-joc}
+\Newlabel{1}{1}
+\Newlabel{2}{2}
+\Newlabel{3}{3}
+\Newlabel{4}{4}
+\citation{rubin1993}
+\citation{little1993}
+\citation{drechsler2011}
+\citation{matthews2011}
+\citation{nowok2016,templ2017}
+\citation{kokosi2022}
+\citation{gonzales2023,giuffre2023}
+\citation{quintana2020}
+\citation{goyal2024,zhao2024}
+\citation{macqueen1967,steinley2006}
+\citation{ahmed2020}
+\citation{ward1963}
+\citation{zappia2018}
+\citation{liu2019}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{2}{section.1}\protected@file@percent }
+\citation{goncalves2020,elemam2020,bhanot2021}
+\citation{rankin2020}
+\citation{snoke2018}
+\citation{yan2022,elemam2022}
+\citation{reinerbenaim2020}
+\citation{lautrup2024}
+\citation{nowok2016}
+\citation{chen2025}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Methods}{5}{section.2}\protected@file@percent }
+\citation{macqueen1967}
+\citation{ward1963}
+\citation{steinley2006,xiong2009}
+\citation{milligan1980}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}A discrepancy framework for structural utility}{6}{subsection.2.1}\protected@file@percent }
+\newlabel{eq:discrepancy}{{1}{6}{A discrepancy framework for structural utility}{equation.2.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Clustering algorithms}{6}{subsection.2.2}\protected@file@percent }
+\newlabel{sec:algorithms}{{2.2}{6}{Clustering algorithms}{subsection.2.2}{}}
+\citation{johnson1987}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Data generation}{7}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}Original data}{7}{subsubsection.2.3.1}\protected@file@percent }
+\citation{qiu2006,zellinger2025}
+\citation{nowok2016}
+\citation{breiman1984}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.2}Synthetic data (CART)}{8}{subsubsection.2.3.2}\protected@file@percent }
+\newlabel{sec:cart}{{2.3.2}{8}{Synthetic data (CART)}{subsubsection.2.3.2}{}}
+\newlabel{eq:cart}{{2}{8}{Synthetic data (CART)}{equation.2.2}{}}
+\citation{nowok2016}
+\citation{rcore2024}
+\citation{pedregosa2011}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Factors of the simulation design and the question each addresses. Crossing all five gives 144 scenarios; with $n=5$ independent original datasets per scenario and $m=1000$ synthetic datasets generated from each, the design yields 720{,}000 evaluations.}}{9}{table.1}\protected@file@percent }
+\newlabel{tab:design}{{1}{9}{Factors of the simulation design and the question each addresses. Crossing all five gives 144 scenarios; with $n=5$ independent original datasets per scenario and $m=1000$ synthetic datasets generated from each, the design yields 720{,}000 evaluations}{table.1}{}}
+\citation{rousseeuw1987}
+\citation{chen2025}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Evaluation metrics}{10}{subsection.2.4}\protected@file@percent }
+\newlabel{sec:metrics}{{2.4}{10}{Evaluation metrics}{subsection.2.4}{}}
+\@writefile{toc}{\contentsline {paragraph}{Number of groups.}{10}{section*.2}\protected@file@percent }
+\newlabel{eq:sr}{{3}{10}{Number of groups}{equation.2.3}{}}
+\citation{kuhn1955}
+\@writefile{toc}{\contentsline {paragraph}{Geometric fidelity.}{11}{section*.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Group-balance error ($\Delta G$).}{11}{section*.4}\protected@file@percent }
+\newlabel{eq:dgini}{{4}{11}{Group-balance error ($\Delta G$)}{equation.2.4}{}}
+\newlabel{eq:gini}{{5}{11}{Group-balance error ($\Delta G$)}{equation.2.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{Mean centroid distance (MCD).}{12}{section*.5}\protected@file@percent }
+\newlabel{eq:mcd}{{6}{12}{Mean centroid distance (MCD)}{equation.2.6}{}}
+\@writefile{toc}{\contentsline {paragraph}{Mean variance difference (MVD).}{12}{section*.6}\protected@file@percent }
+\newlabel{eq:mvd}{{7}{12}{Mean variance difference (MVD)}{equation.2.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Statistical analysis}{12}{subsection.2.5}\protected@file@percent }
+\newlabel{sec:analysis}{{2.5}{12}{Statistical analysis}{subsection.2.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Results}{13}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}The block-like artefact}{13}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Number of groups}{14}{subsection.3.2}\protected@file@percent }
+\newlabel{sec:count}{{3.2}{14}{Number of groups}{subsection.3.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Normal (spherical) components: geometry largely preserved under synthesis. Rows are the original data (top) and one CART synthetic replicate (bottom); columns are the true group labels, the $k$-means partition and the Ward partition. In the two partition columns, colours are matched across rows by Hungarian alignment, so the same colour denotes corresponding groups in the original and synthetic panels. The lower-left panel is drawn in a single colour: the group label in the synthetic data is itself synthesised, so it is a prediction from the synthetic features rather than a planted truth, and it has no bijective correspondence with the original groups. Both rows contain the same number of observations ($N = 1000$); the synthetic panels can look sparser only because CART resamples observed values, so that points coincide more often. Scenario: $k = 2$, $p = 2$, $\rho = 0$, $\sigma = 2$.}}{15}{figure.1}\protected@file@percent }
+\newlabel{fig:normal}{{1}{15}{Normal (spherical) components: geometry largely preserved under synthesis. Rows are the original data (top) and one CART synthetic replicate (bottom); columns are the true group labels, the $k$-means partition and the Ward partition. In the two partition columns, colours are matched across rows by Hungarian alignment, so the same colour denotes corresponding groups in the original and synthetic panels. The lower-left panel is drawn in a single colour: the group label in the synthetic data is itself synthesised, so it is a prediction from the synthetic features rather than a planted truth, and it has no bijective correspondence with the original groups. Both rows contain the same number of observations ($N = 1000$); the synthetic panels can look sparser only because CART resamples observed values, so that points coincide more often. Scenario: $k = 2$, $p = 2$, $\rho = 0$, $\sigma = 2$}{figure.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Gamma (right-skewed) components: the same synthesis mechanism breaks smooth tails into axis-aligned blocks. Panel layout, colour matching, the single-colour lower-left panel and the scenario are as in Fig.~\ref {fig:normal}, and both rows again contain $N = 1000$ observations. Comparing the lower-left panel with the upper-left one shows the artefact directly: the continuous density gradient of the original becomes a set of discrete rectangular patches.}}{16}{figure.2}\protected@file@percent }
+\newlabel{fig:gamma}{{2}{16}{Gamma (right-skewed) components: the same synthesis mechanism breaks smooth tails into axis-aligned blocks. Panel layout, colour matching, the single-colour lower-left panel and the scenario are as in Fig.~\ref {fig:normal}, and both rows again contain $N = 1000$ observations. Comparing the lower-left panel with the upper-left one shows the artefact directly: the continuous density gradient of the original becomes a set of discrete rectangular patches}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Geometric fidelity}{17}{subsection.3.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Cluster-count agreement between synthetic and original data, against separation and stratified by the true number of groups, under two reference conventions. (a) Agreement with the number of groups planted by the simulation ($\mathrm  {RR}$). (b) Agreement with the number a clustering algorithm recovers from the original data ($\mathrm  {AG}$). In panel (a), agreement is low while the groups overlap (shaded) for $k \ge 3$ and moderate for $k = 2$; panel (b) stays high throughout and depends far less on $k$, because in the overlapping regime the algorithms often fail to recover the planted count from the original data as well, so both sides of the comparison deviate from the truth in the same way. The two algorithms track each other closely under (a) and separate under (b). Both panels use all $720{,}000$ original--synthetic pairs.}}{18}{figure.3}\protected@file@percent }
+\newlabel{fig:recovery}{{3}{18}{Cluster-count agreement between synthetic and original data, against separation and stratified by the true number of groups, under two reference conventions. (a) Agreement with the number of groups planted by the simulation ($\mathrm {RR}$). (b) Agreement with the number a clustering algorithm recovers from the original data ($\mathrm {AG}$). In panel (a), agreement is low while the groups overlap (shaded) for $k \ge 3$ and moderate for $k = 2$; panel (b) stays high throughout and depends far less on $k$, because in the overlapping regime the algorithms often fail to recover the planted count from the original data as well, so both sides of the comparison deviate from the truth in the same way. The two algorithms track each other closely under (a) and separate under (b). Both panels use all $720{,}000$ original--synthetic pairs}{figure.3}{}}
+\citation{xiong2009}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Agreement in the number of groups by design factor, over the full 720{,}000-evaluation design, under the two references of Eq.~\eqref  {eq:sr}: the planted number of groups ($\mathrm  {RR}$) and the number estimated from the original data ($\mathrm  {AG}$). Each entry is a marginal mean over all other factors. Candidate range $\{2,\dots  ,\min (k+3,8)\}$; the fixed-range analysis is in Supplementary Table~S2.}}{19}{table.2}\protected@file@percent }
+\newlabel{tab:factors}{{2}{19}{Agreement in the number of groups by design factor, over the full 720{,}000-evaluation design, under the two references of Eq.~\eqref {eq:sr}: the planted number of groups ($\mathrm {RR}$) and the number estimated from the original data ($\mathrm {AG}$). Each entry is a marginal mean over all other factors. Candidate range $\{2,\dots ,\min (k+3,8)\}$; the fixed-range analysis is in Supplementary Table~S2}{table.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Geometric fidelity against separation. Points show the mean of the 36 scenario-level means at each separation level; bands are $95\%$ intervals computed across those scenarios. Left: mean centroid distance. Right: mean variance difference. Both panels share the vertical scale. Both metrics decline as groups separate, and $k$-means remains below Ward throughout.}}{20}{figure.4}\protected@file@percent }
+\newlabel{fig:fidelity}{{4}{20}{Geometric fidelity against separation. Points show the mean of the 36 scenario-level means at each separation level; bands are $95\%$ intervals computed across those scenarios. Left: mean centroid distance. Right: mean variance difference. Both panels share the vertical scale. Both metrics decline as groups separate, and $k$-means remains below Ward throughout}{figure.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Distribution family}{20}{subsection.3.4}\protected@file@percent }
+\newlabel{sec:distribution}{{3.4}{20}{Distribution family}{subsection.3.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces (a) Mean variance difference by dimensionality: total distortion accumulates as dimensions are added, more so for Ward; per coordinate it is roughly constant (see text). (b) Group-balance error $\Delta G$ by distribution family: $k$-means produces lower and less variable balance error for both distributions. Bars are means of scenario-level means; error bars are $95\%$ intervals computed across scenarios.}}{21}{figure.5}\protected@file@percent }
+\newlabel{fig:balance}{{5}{21}{(a) Mean variance difference by dimensionality: total distortion accumulates as dimensions are added, more so for Ward; per coordinate it is roughly constant (see text). (b) Group-balance error $\Delta G$ by distribution family: $k$-means produces lower and less variable balance error for both distributions. Bars are means of scenario-level means; error bars are $95\%$ intervals computed across scenarios}{figure.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Cluster-count agreement by distribution family and separation, under the two references. (a) Versus the planted number of groups: the two families show similar recovery while groups overlap and diverge at intermediate separation, where recovery is lower for Gamma data for both algorithms. (b) Versus the number recovered from the original data: the Gamma penalty attributable to synthesis is largest in the overlapping regime and for Ward.}}{22}{figure.6}\protected@file@percent }
+\newlabel{fig:distribution}{{6}{22}{Cluster-count agreement by distribution family and separation, under the two references. (a) Versus the planted number of groups: the two families show similar recovery while groups overlap and diverge at intermediate separation, where recovery is lower for Gamma data for both algorithms. (b) Versus the number recovered from the original data: the Gamma penalty attributable to synthesis is largest in the overlapping regime and for Ward}{figure.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Agreement between the two algorithms}{22}{subsection.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Discussion}{23}{section.4}\protected@file@percent }
+\citation{chen2025}
+\citation{nowok2016,snoke2018}
+\citation{yan2022,elemam2022}
+\citation{vidiella2025}
+\citation{milligan1980}
+\citation{aschenbruck2023}
+\citation{milligan1985}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Relation to previous work}{25}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Limitations}{26}{subsection.4.2}\protected@file@percent }
+\newlabel{sec:limitations}{{4.2}{26}{Limitations}{subsection.4.2}{}}
+\citation{hubert1985}
+\citation{vidiella2025}
+\citation{hothorn2006}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Future work}{27}{subsection.4.3}\protected@file@percent }
+\newlabel{sec:future}{{4.3}{27}{Future work}{subsection.4.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusions}{28}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subparagraph}{Supplementary information}{29}{section*.7}\protected@file@percent }
+\bibdata{refs}
+\bibcite{ahmed2020}{{1}{2020}{{Ahmed et~al.}}{{Ahmed, Seraj, and Islam}}}
+\bibcite{aschenbruck2023}{{2}{2023}{{Aschenbruck et~al.}}{{Aschenbruck, Szepannek, and Wilhelm}}}
+\bibcite{bhanot2021}{{3}{2021}{{Bhanot et~al.}}{{Bhanot, Qi, Erickson, Guyon, and Bennett}}}
+\bibcite{breiman1984}{{4}{1984}{{Breiman et~al.}}{{Breiman, Friedman, Olshen, and Stone}}}
+\bibcite{chen2025}{{5}{2025}{{Chen}}{{}}}
+\bibcite{drechsler2011}{{6}{2011}{{Drechsler}}{{}}}
+\bibcite{elemam2020}{{7}{2020}{{El~Emam et~al.}}{{El~Emam, Mosquera, and Bass}}}
+\bibcite{elemam2022}{{8}{2022}{{El~Emam et~al.}}{{El~Emam, Mosquera, Fang, and El-Hussuna}}}
+\bibcite{giuffre2023}{{9}{2023}{{Giuffr{\`e} and Shung}}{{}}}
+\bibcite{goncalves2020}{{10}{2020}{{Gon{\c {c}}alves et~al.}}{{Gon{\c {c}}alves, Ray, Soper, Stevens, Coyle, and Sales}}}
+\bibcite{gonzales2023}{{11}{2023}{{Gonzales et~al.}}{{Gonzales, Guruswamy, and Smith}}}
+\bibcite{goyal2024}{{12}{2024}{{Goyal and Mahmoud}}{{}}}
+\bibcite{hothorn2006}{{13}{2006}{{Hothorn et~al.}}{{Hothorn, Hornik, and Zeileis}}}
+\bibcite{hubert1985}{{14}{1985}{{Hubert and Arabie}}{{}}}
+\bibcite{johnson1987}{{15}{1987}{{Johnson}}{{}}}
+\bibcite{kokosi2022}{{16}{2022}{{Kokosi et~al.}}{{Kokosi, De~Stavola, Mitra, Frayling, Doherty, Dove, Sonnenberg, and Harron}}}
+\bibcite{kuhn1955}{{17}{1955}{{Kuhn}}{{}}}
+\bibcite{lautrup2024}{{18}{2024}{{Lautrup et~al.}}{{Lautrup, Hyrup, Zimek, and Schneider-Kamp}}}
+\bibcite{little1993}{{19}{1993}{{Little}}{{}}}
+\bibcite{liu2019}{{20}{2019}{{Liu et~al.}}{{Liu, Song, Wong, Zhang, Yu, Lin, and Ding}}}
+\bibcite{macqueen1967}{{21}{1967}{{MacQueen}}{{}}}
+\bibcite{matthews2011}{{22}{2011}{{Matthews and Harel}}{{}}}
+\bibcite{milligan1980}{{23}{1980}{{Milligan}}{{}}}
+\bibcite{milligan1985}{{24}{1985}{{Milligan and Cooper}}{{}}}
+\bibcite{nowok2016}{{25}{2016}{{Nowok et~al.}}{{Nowok, Raab, and Dibben}}}
+\bibcite{pedregosa2011}{{26}{2011}{{Pedregosa et~al.}}{{}}}
+\bibcite{qiu2006}{{27}{2006}{{Qiu and Joe}}{{}}}
+\bibcite{quintana2020}{{28}{2020}{{Quintana}}{{}}}
+\bibcite{rcore2024}{{29}{2024}{{R Core Team}}{{}}}
+\bibcite{rankin2020}{{30}{2020}{{Rankin et~al.}}{{Rankin, Black, Bond, Wallace, Mulvenna, and Epelde}}}
+\bibcite{reinerbenaim2020}{{31}{2020}{{Reiner~Benaim et~al.}}{{Reiner~Benaim, Almog, Gorelik, Hochberg et~al.}}}
+\bibcite{rousseeuw1987}{{32}{1987}{{Rousseeuw}}{{}}}
+\bibcite{rubin1993}{{33}{1993}{{Rubin}}{{}}}
+\bibcite{snoke2018}{{34}{2018}{{Snoke et~al.}}{{Snoke, Raab, Nowok, Dibben, and Slavkovic}}}
+\bibcite{steinley2006}{{35}{2006}{{Steinley}}{{}}}
+\bibcite{templ2017}{{36}{2017}{{Templ et~al.}}{{Templ, Meindl, Kowarik, and Dupriez}}}
+\bibcite{vidiella2025}{{37}{2025}{{Vidiella~Villegas and L{\'o}pez}}{{}}}
+\bibcite{ward1963}{{38}{1963}{{Ward}}{{}}}
+\bibcite{xiong2009}{{39}{2009}{{Xiong et~al.}}{{Xiong, Wu, and Chen}}}
+\bibcite{yan2022}{{40}{2022}{{Yan et~al.}}{{Yan, Yan, Wan, Zhang, Omberg, Guinney, Mooney, and Malin}}}
+\bibcite{zappia2018}{{41}{2018}{{Zappia and Oshlack}}{{}}}
+\bibcite{zellinger2025}{{42}{2025}{{Zellinger and B{\"u}hlmann}}{{}}}
+\bibcite{zhao2024}{{43}{2024}{{Zhao et~al.}}{{Zhao, Kunar, Birke, Van~der Scheer, and Chen}}}
+\gdef \@abspage@last{35}

@@ -1,0 +1,25 @@
+% =====================================================================
+%  joc_bib.tex -- Journal of Classification reference style.
+%
+%  Use with the class option `sn-basic' REMOVED:
+%      \documentclass[pdflatex]{sn-jnl}      % (+ referee, see joc_referee.tex)
+%      \input{joc_bib}
+%  Reason: with `sn-basic' the class itself issues \bibliographystyle{sn-basic},
+%  and a second \bibliographystyle{sn-joc} would write a second \bibstyle line
+%  to the .aux, which BibTeX rejects ("Illegal, another \bibstyle command")
+%  while keeping the FIRST one.  Without a reference-style option the class
+%  loads no natbib and no style, so this file supplies exactly what the
+%  sn-basic branch of sn-jnl.cls would have done, with sn-joc.bst instead.
+%
+%  longnamesfirst: JoC requires that "The first citation in the text to a
+%  paper with three or more co-authors should list all the names";
+%  subsequent citations use "et al.".  natbib does this automatically with
+%  this option because sn-joc.bst writes the full author list in \bibitem.
+% =====================================================================
+\usepackage[authoryear,longnamesfirst]{natbib}
+\bibliographystyle{sn-joc}
+\makeatletter
+\setlength{\bibsep}{1em}
+\def\bibfont{\reset@font\fontfamily{\rmdefault}\normalsize\selectfont}
+\gdef\NumBib{NO}
+\makeatother

@@ -1,0 +1,272 @@
+Submission guidelines | Journal of Classification | Springer Nature Link
+Skip to main content
+Log in
+Menu
+Find a journal
+Publish with us
+Track your research
+Search
+Saved research
+Cart
+Home
+Journal of Classification
+Submission guidelines
+Journal of Classification
+Journal of Classification
+Publishing model
+:
+Hybrid
+Submit your manuscript
+Save journal
+View saved research
+Explore open access funding
+Select institution
+Journal menu
+About this journal
+Articles
+For authors
+Journal updates
+About this journal
+Aims and scope
+Editorial board
+Editorial policies
+Ethics and disclosures
+Rights and permissions
+Contact the journal
+Articles
+Articles
+Collections
+Volumes and issues
+Online first articles
+Sign up for alerts
+For authors
+Pre-submission checklist
+Submission guidelines
+How to publish with us
+Fees and funding
+Calls for papers
+Language editing
+Submit your manuscript
+Journal updates
+Submission guidelines
+Contents
+Instructions for Authors
+Instructions for Authors
+Availability of computer code
+Research Data Policy and Data Availability Statements
+Editing Services
+Submission Information
+Open access publishing
+Mistakes to avoid during manuscript preparation
+Instructions for Authors
+Instructions for Authors
+Preparation of manuscripts
+This Journal is published three yearly, and a typical issue will have four sections: articles, short notes and comments, software abstracts, and book reviews. It uses a double-blind peer-reviewing system.
+Submit a fully double-spaced, single-column manuscript in English, using a font size of at least 12, with wide margins, including abstract (of at most 150 words), tables, figures, and a cover letter. The manuscript must be submitted electronically through Editorial Manager, an online submission system (http://www.editorialmanager.com/clas/).  The maximum length is 50 pages for a manuscript, and 20 pages for a software abstract. Submission of a paper to this periodical will be assumed to imply that the manuscript represents original work not previously published and not being considered elsewhere for publication. Authors submitting a manuscript agree that the copyright for the article will be transferred to the publisher if and when the article is accepted for publication.
+If the manuscript is accepted for publication, authors should submit attachments via email, along with a pdf file of the manuscript. Authors of accepted papers are encouraged to submit LaTeX files; however Microsoft Word files are also accepted. If submitting LaTeX files, please be sure to include any additional or altered style files that will be needed to run the paper. Other file formats will be subject to a $10 US per page typesetting surcharge.
+With the exception of the following details, the format will conform to the style guide of the American Statistical Association. (See http://pubs.amstat.org/page/styleguide.) In the bibliography, initials rather than actual names should be used for first and middle names of authors, author names are typed in uppercase letters, the month of publication of journals should not be included unless every issue begins with page one, and for books having more than one edition, the specific edition should be given. A horizontal line should not replace authors' names for multiple references by the same authors; the names should be written each time. The first citation in the text to a paper with three or more co-authors should list all the names. Subsequent citations should give the first co-author's name followed by "et al." Citations to books or lengthy review papers for specific details and/or technical points should include page number(s) and/or chapter(s) in the citations. Note especially that no abbreviations whatsoever should be used in journal or book titles. Authors are strongly urged to check their references very carefully before submitting manuscripts so as to avoid excessive delays later, if the manuscript is accepted for publication.
+This Journal requires an explicit description of appropriate types of data for proposed advances in methodology. Defining one or more data matrices as variables is highly recommended near the beginning of text in methodological contributions.
+In manuscripts, it is crucial that vectors and matrices be clearly distinguishable from scalar variables.
+Because the maximum size of figures and tables is a 4.8-inch width x 6.8-inch height, it is critical that letters and numbers be large enough on the original copy to remain legible after reduction to this size.
+Tables should be prepared with extra wide margins; layout should be compact and conserve space, so that reduction can be moderate. It may be necessary to prepare wide tables sideways (landscape) on the page. Tables are to be numbered with Arabic numerals and referred to in the text by number, e.g., Table 2. Figures should be referred to in the text by number, e.g., Figure 3 .
+Color can be published in the electronic edition of the journal, at no charge to the author, if appropriate electronic files are provided. Color will only be included in the print edition when the author covers the additional expense of color printing. For an exact quote on color printing charges, please contact the Technical Editor.
+Guidelines for Electronically Produced Illustrations for Print
+General
+Figures should be submitted within the body of the text. Only if the file size of the manuscript causes problems in uploading it, the large figures should be submitted separately from the text.
+Vector (line) Graphics
+Vector graphics exported from a drawing program should be stored in EPS format.
+Suitable drawing program: Adobe Illustrator. For simple line art the following drawing programs are also acceptable: Corel Draw, Freehand, Canvas.
+No rules narrower than .25 pt.
+No gray screens paler than 15% or darker than 60%.
+Screens meant to be differentiated from one another must differ by at least 15%.
+Spreadsheet/Presentation Graphics
+Most presentation programs (Excel, PowerPoint, Freelance) produce data that cannot be stored in an EPS format. Therefore graphics produced by these programs cannot be used for print.
+Halftone Illustrations
+Black & white and color illustrations should be saved in TIFF format.
+Illustrations should be created using Adobe Photoshop whenever possible.
+Scans*
+Scanned reproductions of black and white photographs should be provided as 300 ppi TIFF files.
+Scanned color illustrations should be provided as TIFF files scanned at a minimum of 300 ppi with a 24-bit color depth.
+Line art should be provided as TIFF files at 600 ppi.
+* We do prefer having the original art as our printers have drum scanners which allow for better reproduction of critical medical halftones.
+Graphics from Videos
+Separate files should be prepared for frames from a video that are to be printed in the journal. When preparing these files you should follow the same rules as listed under Halftone Illustrations.
+Guidelines for Electronically Produced Illustrations for ONLINE
+Video
+Quicktime (.mov) is the preferred format, but .rm, .avi, .mpg, etc. are acceptable.
+No video file should be larger than 2MB. To decrease the size of your file, consider changing one or more of the following variables: frame speed, number of colors/greys, viewing size (in pixels), or compression. Video is subject to Editorial review and approval.
+Back to top
+Availability of computer code
+Authors must make available upon request, to editors and reviewers, any previously unreported custom computer code or algorithm used to generate the data presented in the manuscript. Any reason that would preclude the need for code or algorithm sharing will be evaluated by the editors who reserve the right to decline the paper if important code is unavailable.
+For all studies using custom code in the generation or processing of the described data, a statement must be included under the heading "Code availability", indicating whether and how the code can be accessed, including any restrictions to access. Code availability statements should be provided as a separate section after the data availability statement but before the references.
+Upon publication, the Journal of Classification considers it best practice to release custom computer code in a way that allows readers to repeat any steps involved in generating or processing central datasets.
+Authors may supply code as Supplementary Information files, particularly when code must be kept private during peer review. Before final publication, however, authors are encouraged to archive their code in a public repository that can assign it a DOI, such as figshare. In addition, for sufficiently complex software, we recommend sharing your software with GitHub in combination with a DOI providing repository to provide permanent access to a usable instance of code. Code with an assigned DOI may be formally cited and listed in the References section of the manuscript.
+Computational models should be deposited to community-supported model repositories when they exist (e.g. BioModels for models of biological processes).
+Back to top
+Research Data Policy and Data Availability Statements
+This journal follows Springer Nature
+research data policy
+. Sharing of all relevant research data is strongly encouraged and authors must add a Data Availability Statement to original research articles.
+Research data includes a wide range of types, including spreadsheets, images, textual extracts, archival documents, video or audio, interview notes or any specialist formats generated during research.
+Data availability statements
+All original research must include a data availability statement. This statement should explain how to access data supporting the results and analysis in the article, including links/citations to publicly archived datasets analysed or generated during the study. Please see our full policy
+here
+.
+If it is not possible to share research data publicly, for instance when individual privacy could be compromised, this statement should describe how data can be accessed and any conditions for reuse. Participant consent should be obtained and documented prior to data collection. See our
+guidance on sensitive data
+for more information.
+When creating a data availability statement, authors are encouraged to consider the minimal dataset that would be necessary to interpret, replicate and build upon the findings reported in the article.
+Further guidance on writing a data availability statement, including examples, is available at:
+Data availability statements
+Data repositories
+Authors are strongly encouraged to deposit their supporting data in a publicly available repository. Sharing your data in a repository promotes the integrity, discovery and reuse of your research, making it easier for the research community to build on and credit your work.
+See our
+data repository guidance
+for information on finding a suitable repository.
+We recommend the use of discipline-specific repositories where available. For a number of data types, submission to specific public repositories is mandatory.
+See our
+list of mandated data types
+.
+The journal encourages making research data available under open licences that permit reuse. The journal does not enforce use of particular licences in third party repositories. You should ensure you have necessary rights to share any data that you deposit in a repository.
+Data citation
+The journal recommends that authors cite any publicly available data on which the conclusions of the paper rely. This includes data the authors are sharing alongside their publication and any secondary data the authors have reused. Data citations should include a persistent identifier (such as a DOI), should be included in the reference list using the minimum information recommended by
+DataCite
+(Dataset Creator, Dataset Title, Publisher [repository], Publication Year, Identifier [e.g. DOI, Handle, Accession or ARK]) and follow journal style.
+See our
+further guidance
+on citing datasets.
+Research data and peer review
+If the journal that you are submitting to uses double-anonymous peer review and you are providing reviewers with access to your data (for example via a repository link, supplementary information or data on request), it is strongly suggested that the authorship in the data is also anonymised. There are
+data repositories that can assist with this
+and/or will create a link to mask the authorship of your data.
+Support with research data policy
+Authors who need help understanding our data sharing policy, finding a suitable data repository, or organising and sharing research data can consult our
+Research Data Helpdesk
+for guidance.
+See our
+FAQ page
+for more information on Springer Nature's research data policy.
+Back to top
+Editing Services
+English
+How can you help improve your manuscript for publication?
+Presenting your work in a well-structured manuscript and in well-written English gives it its best chance for editors and reviewers to understand it and evaluate it fairly. Many researchers find that getting some independent support helps them present their results in the best possible light. The experts at Springer Nature Author Services can help you with manuscript preparation—including
+English language editing, developmental comments, manuscript formatting, figure preparation, translation
+, and more.
+Get started and save 15%
+You can also use our free
+Grammar Check
+tool for an evaluation of your work.
+Please note that using these tools, or any other service, is not a requirement for publication, nor does it imply or guarantee that editors will accept the article, or even select it for peer review.
+Chinese (中文)
+您怎么做才有助于改进您的稿件以便顺利发表？
+如果在结构精巧的稿件中用精心组织的英语展示您的作品，就能最大限度地让编辑和审稿人理解并公正评估您的作品。许多研究人员发现，获得一些独立支持有助于他们以尽可能美好的方式展示他们的成果。Springer Nature Author Services 的专家可帮助您准备稿件，具体包括
+润色英语表述、添加有见地的注释、为稿件排版、设计图表、翻译
+等。
+开始使用即可节省 15% 的费用
+您还可以使用我们的
+免费语法检查工具
+来评估您的作品。
+请注意，使用这些工具或任何其他服务不是发表前必须满足的要求，也不暗示或保证相关文章定会被编辑接受（甚至未必会被选送同行评审）。
+Japanese (日本語)
+発表に備えて、論文を改善するにはどうすればよいでしょうか？
+内容が適切に組み立てられ、質の高い英語で書かれた論文を投稿すれば、編集者や査読者が論文を理解し、公正に評価するための最善の機会となります。多くの研究者は、個別のサポートを受けることで、研究結果を可能な限り最高の形で発表できると思っています。Springer Nature Author Servicesのエキスパートが、
+英文の編集、建設的な提言、論文の書式、図の調整、翻訳
+など、論文の作成をサポートいたします。
+今なら15％割引でご利用いただけます
+原稿の評価に、無料
+の文法チェック
+ツールもご利用いただけます。
+これらのツールや他のサービスをご利用いただくことは、論文を掲載するための要件ではありません。また、編集者が論文を受理したり、査読に選定したりすることを示唆または保証するものではないことにご注意ください。
+Korean (한국어)
+게재를 위해 원고를 개선하려면 어떻게 해야 할까요?
+여러분의 작품을 체계적인 원고로 발표하는 것은 편집자와 심사자가 여러분의 연구를 이해하고 공정하게 평가할 수 있는 최선의 기회를 제공합니다. 많은 연구자들은 어느 정도 독립적인 지원을 받는 것이 가능한 한 최선의 방법으로 자신의 결과를 발표하는 데 도움이 된다고 합니다. Springer Nature Author Services 전문가들은
+영어 편집, 발전적인 논평, 원고 서식 지정, 그림 준비, 번역
+등과 같은 원고 준비를 도와드릴 수 있습니다.
+지금 시작하면 15% 할인됩니다.
+또한 당사의 무료
+문법 검사
+도구를 사용하여 여러분의 연구를 평가할 수 있습니다.
+이러한 도구 또는 기타 서비스를 사용하는 것은 게재를 위한 필수 요구사항이 아니며, 편집자가 해당 논문을 수락하거나 피어 리뷰에 해당 논문을 선택한다는 것을 암시하거나 보장하지는 않습니다.
+Back to top
+Submission Information
+Articles should be submitted through the online submission system here:
+http://www.editorialmanager.com/clas/
+Please prepare your manuscript following the detailed Instructions for Authors for this journal. They can be accessed from the For Authors and Editors Link Section on the right hand side of this page.
+Please make sure to provide the following information with your manuscript:
+E-mail address
+Full postal address
+Telephone number
+Back to top
+Open access publishing
+To find out more about publishing your work Open Access in
+Journal of Classification
+, including information on fees, funding and licences, visit our
+Open access publishing page
+.
+Back to top
+Journal navigation
+About this journal
+Aims and scope
+Editorial board
+Editorial policies
+Ethics and disclosures
+Rights and permissions
+Contact the journal
+Articles
+Articles
+Collections
+Volumes and issues
+Online first articles
+Sign up for alerts
+For authors
+Pre-submission checklist
+Submission guidelines
+How to publish with us
+Fees and funding
+Calls for papers
+Language editing
+Submit your manuscript
+Journal updates
+Journal updates
+Search
+Search by keyword or author
+Search
+Navigation
+Find a journal
+Publish with us
+Track your research
+Footer Navigation
+Discover content
+Journals A-Z
+Books A-Z
+Subjects A-Z
+Publish with us
+Journal finder
+Publish your research
+Language editing
+Open access publishing
+Products and services
+Our products
+Librarians
+Societies
+Partners and advertisers
+Our brands
+Springer
+Nature Portfolio
+BMC
+Palgrave Macmillan
+Apress
+Discover
+Corporate Navigation
+Your privacy choices/Manage cookies
+Your US state privacy rights
+Accessibility statement
+Terms and conditions
+Privacy policy
+Help and support
+Legal notice
+Cancel contracts here
+88.30.47.22
+Not affiliated
+© 2026 Springer Nature

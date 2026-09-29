@@ -1,0 +1,118 @@
+% =====================================================================
+%  joc_referee.tex -- Journal of Classification referee layout for sn-jnl.cls
+%
+%  JoC: "Submit a fully double-spaced, single-column manuscript in English,
+%  using a font size of at least 12, with wide margins ..."
+%
+%  Usage (immediately after \documentclass):
+%      \documentclass[pdflatex,referee]{sn-jnl}
+%      \input{joc_referee}
+%
+%  Why a patch is needed: sn-jnl.cls loads article.cls without a size option
+%  and then hard-codes a 10bp/12bp \normalsize (plus fixed \fontsize values
+%  for the title, abstract, headings, captions and tables), so the `12pt'
+%  class option has no effect; `referee' only loads setspace and calls
+%  \doublespacing on that 10-pt body.  This file
+%    1. re-declares the size commands with the size12.clo values (12/14.5 pt);
+%    2. re-declares the class's fixed-size font hooks so the abstract,
+%       keywords, headings, captions and table bodies are >= 12 pt;
+%    3. sets double spacing for 12 pt (\setstretch{1.655}: 14.5 pt x 1.655
+%       = 24 pt baseline = 2 x 12 pt) and double-spaced captions;
+%    4. resets the page to A4, single column, 30 mm margins on all sides
+%       (text block 150 mm x 237 mm), no binding offset.
+%  Works with or without the `referee' option (setspace is loaded here too).
+%  Table bodies are 12 pt but single-spaced inside the tabular (setspace
+%  default for floats); set \jocdoublefloatstrue below to double-space them.
+% =====================================================================
+\makeatletter
+\RequirePackage{setspace}
+\newif\ifjocdoublefloats \jocdoublefloatsfalse
+%
+% ---- 1. size commands (values from article's size12.clo) -------------
+\renewcommand\normalsize{%
+   \@setfontsize\normalsize\@xiipt{14.5}%
+   \abovedisplayskip 12\p@ \@plus3\p@ \@minus7\p@
+   \abovedisplayshortskip \z@ \@plus3\p@
+   \belowdisplayshortskip 6.5\p@ \@plus3.5\p@ \@minus3\p@
+   \belowdisplayskip \abovedisplayskip
+   \let\@listi\@listI}
+\renewcommand\small{%
+   \@setfontsize\small\@xipt{13.6}%
+   \abovedisplayskip 11\p@ \@plus3\p@ \@minus6\p@
+   \abovedisplayshortskip \z@ \@plus3\p@
+   \belowdisplayshortskip 6.5\p@ \@plus3.5\p@ \@minus3\p@
+   \def\@listi{\leftmargin\leftmargini
+               \topsep 9\p@ \@plus3\p@ \@minus5\p@
+               \parsep 4.5\p@ \@plus2\p@ \@minus\p@
+               \itemsep \parsep}%
+   \belowdisplayskip \abovedisplayskip}
+\renewcommand\footnotesize{%
+   \@setfontsize\footnotesize\@xpt\@xiipt
+   \abovedisplayskip 10\p@ \@plus2\p@ \@minus5\p@
+   \abovedisplayshortskip \z@ \@plus3\p@
+   \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
+   \def\@listi{\leftmargin\leftmargini
+               \topsep 6\p@ \@plus2\p@ \@minus2\p@
+               \parsep 3\p@ \@plus2\p@ \@minus\p@
+               \itemsep \parsep}%
+   \belowdisplayskip \abovedisplayskip}
+\renewcommand\scriptsize{\@setfontsize\scriptsize\@viiipt{9.5}}
+\renewcommand\tiny{\@setfontsize\tiny\@vipt\@viipt}
+\renewcommand\large{\@setfontsize\large\@xivpt{18}}
+\renewcommand\Large{\@setfontsize\Large\@xviipt{22}}
+\renewcommand\LARGE{\@setfontsize\LARGE\@xxpt{25}}
+\renewcommand\huge{\@setfontsize\huge\@xxvpt{30}}
+\renewcommand\Huge{\@setfontsize\Huge\@xxvpt{30}}
+\DeclareMathSizes{12}{12}{8}{6}
+\DeclareMathSizes{\@xiipt}{\@xiipt}{8}{6}
+\normalsize
+%
+% ---- 2. fixed-size hooks of sn-jnl.cls -------------------------------
+% (all body-type material at 12 pt; title/section heads scaled up)
+\def\Artcatfont{\reset@font\fontsize{12}{14.5}\selectfont}
+\def\Titlefont{\reset@font\fontsize{20}{25}\selectfont\titraggedcenter}
+\def\SubTitlefont{\reset@font\fontsize{17}{22}\selectfont\titraggedcenter}
+\def\Authorfont{\reset@font\fontsize{14}{18}\selectfont\boldmath\titraggedcenter}
+\def\addressfont{\reset@font\fontsize{12}{14.5}\selectfont\titraggedcenter}
+\def\abstractheadfont{\reset@font\fontsize{12}{14.5}\bfseries\selectfont\titraggedcenter}
+\def\abstractsubheadfont{\reset@font\fontsize{12}{14.5}\bfseries\selectfont}
+% \unboldmath: in sn-jnl the \boldmath of \Authorfont leaks into the abstract
+% (math and numbers in the v4 abstract are bold); switch it off here.
+\def\abstractfont{\reset@font\fontsize{12}{14.5}\selectfont\unboldmath\setstretch{1.655}%
+   \leftskip=0pt\rightskip=0pt\parfillskip=0pt plus 1fil}
+\def\keywordfont{\reset@font\fontsize{12}{14.5}\selectfont\unboldmath\setstretch{1.655}%
+   \leftskip=0pt\rightskip=0pt plus0.5fill}
+\def\historyfont{\reset@font\fontsize{12}{14.5}\selectfont\leftskip=0pt\rightskip=0pt plus0.5fill}
+\def\sectionfont{\reset@font\fontfamily{\rmdefault}\fontsize{14.4}{18}\bfseries\selectfont\raggedright\boldmath}
+\def\subsectionfont{\reset@font\fontfamily{\rmdefault}\fontsize{12}{14.5}\bfseries\selectfont\raggedright\boldmath}
+\def\subsubsectionfont{\reset@font\fontsize{12}{14.5}\bfseries\itshape\selectfont\raggedright\boldmath}
+\def\paragraphfont{\reset@font\fontsize{12}{14.5}\bfseries\itshape\selectfont\raggedright}
+\def\bmheadfont{\reset@font\fontfamily{\rmdefault}\fontsize{12}{14.5}\bfseries\selectfont\raggedright\boldmath}
+\def\figurecaptionfont{\reset@font\fontfamily{\rmdefault}\fontsize{12}{14.5}\selectfont\setstretch{1.655}}
+\def\tablecaptionfont{\reset@font\fontsize{12}{14.5}\selectfont\setstretch{1.655}}
+\def\tablebodyfont{\reset@font\fontsize{12}{14.5}\selectfont}
+\def\tablecolheadfont{\reset@font\fontsize{12}{14.5}\selectfont\bfseries\boldmath}
+\def\tablefootnotefont{\reset@font\fontsize{12}{14.5}\selectfont}
+\def\quotefont{\reset@font\fontfamily{\rmdefault}\fontsize{12}{14.5}\selectfont}
+\def\headerfont{\reset@font\fontsize{12}{0}\selectfont}
+\def\opheaderfont{\reset@font\fontsize{12}{0}\selectfont}
+\def\footerfont{\reset@font\fontsize{12}{0}\selectfont}
+\def\bibfont{\reset@font\fontfamily{\rmdefault}\normalsize\selectfont}
+%
+% Tables in the manuscript body call \small explicitly (11 pt); inside
+% table floats make \small and \footnotesize equal to 12 pt as well.
+\RequirePackage{etoolbox}
+\AtBeginEnvironment{table}{\let\small\normalsize\let\footnotesize\normalsize}
+\AtBeginEnvironment{table*}{\let\small\normalsize\let\footnotesize\normalsize}
+%
+% ---- 3. line spacing ---------------------------------------------------
+\setstretch{1.655}                 % 14.5 pt x 1.655 = 24 pt = double spacing
+\AtBeginDocument{%
+  \ifjocdoublefloats\def\setspace@singlespace{1.655}\fi}
+%
+% ---- 4. page: A4, single column, 30 mm margins -------------------------
+\geometry{a4paper,left=30mm,right=30mm,top=30mm,bottom=30mm,
+          bindingoffset=0mm,headheight=15pt,headsep=8mm,footskip=12mm,
+          marginparwidth=15mm}
+\@twocolumnfalse
+\makeatother

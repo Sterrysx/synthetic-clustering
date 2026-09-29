@@ -1,0 +1,263 @@
+\begin{thebibliography}{49}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{{#1}}
+\providecommand{\urlprefix}{URL }
+\providecommand{\doi}[1]{\url{https://doi.org/#1}}
+\providecommand{\eprint}[2][]{\url{#2}}
+ \bibcommenthead
+
+\bibitem[{Ahmed et~al.(2020)Ahmed, Seraj, and Islam}]{ahmed2020}
+AHMED, M., SERAJ, R., and ISLAM, S. M.~S. (2020) The k-means algorithm: A
+  comprehensive survey and performance evaluation. Electronics 9(8):1295.
+  \doi{10.3390/electronics9081295}
+
+\bibitem[{Arthur and Vassilvitskii(2007)}]{arthur2007}
+ARTHUR, D., and VASSILVITSKII, S. (2007) $k$-means++: The advantages of careful
+  seeding. In: Proceedings of the Eighteenth Annual ACM-SIAM Symposium on
+  Discrete Algorithms, pp 1027--1035
+
+\bibitem[{Aschenbruck et~al.(2023)Aschenbruck, Szepannek, and
+  Wilhelm}]{aschenbruck2023}
+ASCHENBRUCK, R., SZEPANNEK, G., and WILHELM, A. F.~X. (2023) Imputation
+  strategies for clustering mixed-type data with missing values. Journal of
+  Classification 40(1):2--24. \doi{10.1007/s00357-022-09422-y}
+
+\bibitem[{Bhanot et~al.(2021)Bhanot, Qi, Erickson, Guyon, and
+  Bennett}]{bhanot2021}
+BHANOT, K., QI, M., ERICKSON, J.~S., GUYON, I., and BENNETT, K.~P. (2021) The
+  problem of fairness in synthetic healthcare data. Entropy 23(9):1165.
+  \doi{10.3390/e23091165}
+
+\bibitem[{Breiman et~al.(1984)Breiman, Friedman, Olshen, and
+  Stone}]{breiman1984}
+BREIMAN, L., FRIEDMAN, J.~H., OLSHEN, R.~A., and STONE, C.~J. (1984)
+  Classification and Regression Trees. Wadsworth, Belmont, CA
+
+\bibitem[{Chen(2025)}]{chen2025}
+CHEN, X. (2025) Evaluating the utility of synthetic data for clustering.
+  Bachelor's thesis, Universitat Polit{\`e}cnica de Catalunya, Barcelona
+
+\bibitem[{Drechsler(2011)}]{drechsler2011}
+DRECHSLER, J. (2011) Synthetic Datasets for Statistical Disclosure Control:
+  Theory and Implementation. Springer, New York
+
+\bibitem[{El~Emam et~al.(2020)El~Emam, Mosquera, and Bass}]{elemam2020}
+EL~EMAM, K., MOSQUERA, L., and BASS, J. (2020) Evaluating identity disclosure
+  risk in fully synthetic health data: Model development and validation.
+  Journal of Medical Internet Research 22(11):e23139. \doi{10.2196/23139}
+
+\bibitem[{El~Emam et~al.(2022)El~Emam, Mosquera, Fang, and
+  El-Hussuna}]{elemam2022}
+EL~EMAM, K., MOSQUERA, L., FANG, X., and EL-HUSSUNA, A. (2022) Utility metrics
+  for evaluating synthetic health data generation methods: Validation study.
+  JMIR Medical Informatics 10(4):e35734. \doi{10.2196/35734}
+
+\bibitem[{Giuffr{\`e} and Shung(2023)}]{giuffre2023}
+GIUFFR{\`E}, M., and SHUNG, D.~L. (2023) Harnessing the power of synthetic data
+  in healthcare: Innovation, application, and privacy. npj Digital Medicine
+  6:186. \doi{10.1038/s41746-023-00927-3}
+
+\bibitem[{Gon{\c{c}}alves et~al.(2020)Gon{\c{c}}alves, Ray, Soper, Stevens,
+  Coyle, and Sales}]{goncalves2020}
+GON{\c{C}}ALVES, A., RAY, P., SOPER, B., STEVENS, J., COYLE, L., and SALES,
+  A.~P. (2020) Generation and evaluation of synthetic patient data. BMC Medical
+  Research Methodology 20:108. \doi{10.1186/s12874-020-00977-1}
+
+\bibitem[{Gonzales et~al.(2023)Gonzales, Guruswamy, and Smith}]{gonzales2023}
+GONZALES, A., GURUSWAMY, G., and SMITH, S.~R. (2023) Synthetic data in health
+  care: A narrative review. PLOS Digital Health 2(1):e0000082.
+  \doi{10.1371/journal.pdig.0000082}
+
+\bibitem[{Goyal and Mahmoud(2024)}]{goyal2024}
+GOYAL, M., and MAHMOUD, Q.~H. (2024) A systematic review of synthetic data
+  generation techniques using generative {AI}. Electronics 13(17):3509.
+  \doi{10.3390/electronics13173509}
+
+\bibitem[{Hothorn et~al.(2006)Hothorn, Hornik, and Zeileis}]{hothorn2006}
+HOTHORN, T., HORNIK, K., and ZEILEIS, A. (2006) Unbiased recursive
+  partitioning: A conditional inference framework. Journal of Computational and
+  Graphical Statistics 15(3):651--674. \doi{10.1198/106186006X133933}
+
+\bibitem[{Hubert and Arabie(1985)}]{hubert1985}
+HUBERT, L., and ARABIE, P. (1985) Comparing partitions. Journal of
+  Classification 2(1):193--218. \doi{10.1007/BF01908075}
+
+\bibitem[{Inaba et~al.(1994)Inaba, Katoh, and Imai}]{inaba1994}
+INABA, M., KATOH, N., and IMAI, H. (1994) Applications of weighted {V}oronoi
+  diagrams and randomization to variance-based $k$-clustering. In: Proceedings
+  of the Tenth Annual Symposium on Computational Geometry, pp 332--339,
+  \doi{10.1145/177424.178042}
+
+\bibitem[{Johnson(1987)}]{johnson1987}
+JOHNSON, M.~E. (1987) Multivariate Statistical Simulation. Wiley, New York
+
+\bibitem[{Jonker and Volgenant(1987)}]{jonker1987}
+JONKER, R., and VOLGENANT, A. (1987) A shortest augmenting path algorithm for
+  dense and sparse linear assignment problems. Computing 38(4):325--340.
+  \doi{10.1007/BF02278710}
+
+\bibitem[{Kokosi et~al.(2022)Kokosi, De~Stavola, Mitra, Frayling, Doherty,
+  Dove, Sonnenberg, and Harron}]{kokosi2022}
+KOKOSI, T., DE~STAVOLA, B., MITRA, R., FRAYLING, L., DOHERTY, A., DOVE, I.,
+  SONNENBERG, P., and HARRON, K. (2022) An overview on synthetic administrative
+  data for research. International Journal for Population Data Science
+  7(1):1727. \doi{10.23889/ijpds.v7i1.1727}
+
+\bibitem[{Kuhn(1955)}]{kuhn1955}
+KUHN, H.~W. (1955) The {H}ungarian method for the assignment problem. Naval
+  Research Logistics Quarterly 2(1--2):83--97
+
+\bibitem[{Lautrup et~al.(2024)Lautrup, Hyrup, Zimek, and
+  Schneider-Kamp}]{lautrup2024}
+LAUTRUP, A.~D., HYRUP, T., ZIMEK, A., and SCHNEIDER-KAMP, P. (2024) Systematic
+  review of generative modelling tools and utility metrics for fully synthetic
+  tabular data. ACM Computing Surveys 57(4):1--38. \doi{10.1145/3704437}
+
+\bibitem[{Little(1993)}]{little1993}
+LITTLE, R. J.~A. (1993) Statistical analysis of masked data. Journal of
+  Official Statistics 9(2):407--426
+
+\bibitem[{Liu et~al.(2019)Liu, Song, Wong, Zhang, Yu, Lin, and Ding}]{liu2019}
+LIU, X., SONG, W., WONG, B.~Y., ZHANG, T., YU, S., LIN, G.~N., and DING, X.
+  (2019) A comparison framework and guideline of clustering methods for mass
+  cytometry data. Genome Biology 20:297. \doi{10.1186/s13059-019-1917-7}
+
+\bibitem[{Lloyd(1982)}]{lloyd1982}
+LLOYD, S.~P. (1982) Least squares quantization in {PCM}. IEEE Transactions on
+  Information Theory 28(2):129--137. \doi{10.1109/TIT.1982.1056489}
+
+\bibitem[{MacQueen(1967)}]{macqueen1967}
+MACQUEEN, J. (1967) Some methods for classification and analysis of
+  multivariate observations. Proceedings of the Fifth Berkeley Symposium on
+  Mathematical Statistics and Probability 1:281--297
+
+\bibitem[{Matthews and Harel(2011)}]{matthews2011}
+MATTHEWS, G.~J., and HAREL, O. (2011) Data confidentiality: A review of methods
+  for statistical disclosure limitation and methods for assessing privacy.
+  Statistics Surveys 5. \doi{10.1214/11-SS074}
+
+\bibitem[{Milligan(1980)}]{milligan1980}
+MILLIGAN, G.~W. (1980) An examination of the effect of six types of error
+  perturbation on fifteen clustering algorithms. Psychometrika 45(3):325--342.
+  \doi{10.1007/BF02293907}
+
+\bibitem[{Milligan and Cooper(1985)}]{milligan1985}
+MILLIGAN, G.~W., and COOPER, M.~C. (1985) An examination of procedures for
+  determining the number of clusters in a data set. Psychometrika
+  50(2):159--179. \doi{10.1007/BF02294245}
+
+\bibitem[{M{\"u}llner(2011)}]{mullner2011}
+M{\"U}LLNER, D. (2011) Modern hierarchical, agglomerative clustering
+  algorithms. arXiv preprint arXiv:11092378 \doi{10.48550/arXiv.1109.2378}
+
+\bibitem[{Murtagh and Contreras(2017)}]{murtagh2017}
+MURTAGH, F., and CONTRERAS, P. (2017) Algorithms for hierarchical clustering:
+  An overview, {II}. WIREs Data Mining and Knowledge Discovery 7(6).
+  \doi{10.1002/widm.1219}
+
+\bibitem[{Nowok et~al.(2016)Nowok, Raab, and Dibben}]{nowok2016}
+NOWOK, B., RAAB, G.~M., and DIBBEN, C. (2016) {synthpop}: Bespoke creation of
+  synthetic data in {R}. Journal of Statistical Software 74(11).
+  \doi{10.18637/jss.v074.i11}
+
+\bibitem[{Pedregosa et~al.(2011)}]{pedregosa2011}
+PEDREGOSA, F. et~al. (2011) Scikit-learn: Machine learning in {P}ython. Journal
+  of Machine Learning Research 12:2825--2830
+
+\bibitem[{Qiu and Joe(2006)}]{qiu2006}
+QIU, W., and JOE, H. (2006) Generation of random clusters with specified degree
+  of separation. Journal of Classification 23(2):315--334.
+  \doi{10.1007/s00357-006-0018-y}
+
+\bibitem[{Quintana(2020)}]{quintana2020}
+QUINTANA, D.~S. (2020) A synthetic dataset primer for the biobehavioural
+  sciences to promote reproducibility and hypothesis generation. eLife
+  9:e53275. \doi{10.7554/eLife.53275}
+
+\bibitem[{{R Core Team}(2024)}]{rcore2024}
+{R CORE TEAM} (2024) R: A Language and Environment for Statistical Computing. R
+  Foundation for Statistical Computing, Vienna, Austria,
+  \urlprefix\url{https://www.R-project.org/}, version 4.3
+
+\bibitem[{Rankin et~al.(2020)Rankin, Black, Bond, Wallace, Mulvenna, and
+  Epelde}]{rankin2020}
+RANKIN, D., BLACK, M., BOND, R., WALLACE, J., MULVENNA, M., and EPELDE, G.
+  (2020) Reliability of supervised machine learning using synthetic data in
+  health care: Model to preserve privacy for data sharing. JMIR Medical
+  Informatics 8(7):e18910. \doi{10.2196/18910}
+
+\bibitem[{Reiner~Benaim et~al.(2020)Reiner~Benaim, Almog, Gorelik, Hochberg
+  et~al.}]{reinerbenaim2020}
+REINER~BENAIM, A., ALMOG, R., GORELIK, Y., HOCHBERG, I. et~al. (2020) Analyzing
+  medical research results based on synthetic data and their relation to real
+  data results: Systematic comparison from five observational studies. JMIR
+  Medical Informatics 8(2):e16492. \doi{10.2196/16492}
+
+\bibitem[{Rousseeuw(1987)}]{rousseeuw1987}
+ROUSSEEUW, P.~J. (1987) Silhouettes: A graphical aid to the interpretation and
+  validation of cluster analysis. Journal of Computational and Applied
+  Mathematics 20:53--65. \doi{10.1016/0377-0427(87)90125-7}
+
+\bibitem[{Rubin(1993)}]{rubin1993}
+RUBIN, D.~B. (1993) Statistical disclosure limitation. Journal of Official
+  Statistics 9(2):461--468
+
+\bibitem[{Snoke et~al.(2018)Snoke, Raab, Nowok, Dibben, and
+  Slavkovic}]{snoke2018}
+SNOKE, J., RAAB, G.~M., NOWOK, B., DIBBEN, C., and SLAVKOVIC, A. (2018) General
+  and specific utility measures for synthetic data. Journal of the Royal
+  Statistical Society: Series A (Statistics in Society) 181(3):663--688.
+  \doi{10.1111/rssa.12358}
+
+\bibitem[{Steinley(2006)}]{steinley2006}
+STEINLEY, D. (2006) K-means clustering: A half-century synthesis. British
+  Journal of Mathematical and Statistical Psychology 59(1):1--34.
+  \doi{10.1348/000711005X48266}
+
+\bibitem[{Templ et~al.(2017)Templ, Meindl, Kowarik, and Dupriez}]{templ2017}
+TEMPL, M., MEINDL, B., KOWARIK, A., and DUPRIEZ, O. (2017) Simulation of
+  synthetic complex data: The {R} package {simPop}. Journal of Statistical
+  Software 79(10). \doi{10.18637/jss.v079.i10}
+
+\bibitem[{Vidiella~Villegas and L{\'o}pez(2025)}]{vidiella2025}
+VIDIELLA~VILLEGAS, M., and L{\'O}PEZ, V. (2025) Synthetic data generation for
+  clustering models: A case study in mental health monitoring. In: Intelligent
+  Data Engineering and Automated Learning -- IDEAL 2025, Lecture Notes in
+  Computer Science, vol 16238. Springer, Cham, pp 47--58,
+  \doi{10.1007/978-3-032-10486-1_5}
+
+\bibitem[{Ward(1963)}]{ward1963}
+WARD, J.~H. (1963) Hierarchical grouping to optimize an objective function.
+  Journal of the American Statistical Association 58(301):236--244.
+  \doi{10.2307/2282967}
+
+\bibitem[{Xiong et~al.(2009)Xiong, Wu, and Chen}]{xiong2009}
+XIONG, H., WU, J., and CHEN, J. (2009) K-means clustering versus validation
+  measures: A data-distribution perspective. IEEE Transactions on Systems, Man,
+  and Cybernetics, Part B (Cybernetics) 39(2):318--331.
+  \doi{10.1109/TSMCB.2008.2004559}
+
+\bibitem[{Yan et~al.(2022)Yan, Yan, Wan, Zhang, Omberg, Guinney, Mooney, and
+  Malin}]{yan2022}
+YAN, C., YAN, Y., WAN, Z., ZHANG, Z., OMBERG, L., GUINNEY, J., MOONEY, S.~D.,
+  and MALIN, B.~A. (2022) A multifaceted benchmarking of synthetic electronic
+  health record generation models. Nature Communications 13:7609.
+  \doi{10.1038/s41467-022-35295-1}
+
+\bibitem[{Zappia and Oshlack(2018)}]{zappia2018}
+ZAPPIA, L., and OSHLACK, A. (2018) Clustering trees: A visualization for
+  evaluating clusterings at multiple resolutions. GigaScience 7(7):giy083.
+  \doi{10.1093/gigascience/giy083}
+
+\bibitem[{Zellinger and B{\"u}hlmann(2025)}]{zellinger2025}
+ZELLINGER, M.~J., and B{\"U}HLMANN, P. (2025) Natural language-based synthetic
+  data generation for cluster analysis. Journal of Classification
+  42(3):517--543. \doi{10.1007/s00357-025-09501-w}
+
+\bibitem[{Zhao et~al.(2024)Zhao, Kunar, Birke, Van~der Scheer, and
+  Chen}]{zhao2024}
+ZHAO, Z., KUNAR, A., BIRKE, R., VAN~DER SCHEER, H., and CHEN, L.~Y. (2024)
+  {CTAB-GAN+}: Enhancing tabular data synthesis. Frontiers in Big Data
+  6:1296508. \doi{10.3389/fdata.2023.1296508}
+
+\end{thebibliography}

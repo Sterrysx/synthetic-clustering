@@ -23,7 +23,7 @@ the whole thing. The rest of this document is scoped to that claim.
 ### Your pipeline (unchanged, still required)
 
 ```
-~/Desktop/academic/research/ml-research/clustering/
+~/Desktop/personal/academic/research/ml-research/clustering/
 ├── config/config.json                        18 lines   design grid
 ├── 01_generate_OD/
 │   └── 01_generate_original_data.R          369 lines   144 OD datasets
