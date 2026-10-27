@@ -74,6 +74,7 @@ from synthclust.checkpoint import ScenarioStore
 from synthclust.paths import RESULTS_DIR, FIDELITY_RESULTS
 
 BASE_SEED = 20260929
+N_DATASETS = 144 * len(rm.REPS)       # original datasets (720 at n = 5, 7200 at n = 50)
 ALGOS = rm.ALGOS
 KEYS = ["p", "k", "rho", "sep", "distribution", "rep"]
 SCEN = KEYS[:-1]
@@ -576,8 +577,8 @@ def summarize(args):
                     "share_scenarios_collapse_cell": float(sub_s.cell.mean()),
                     "n_scenarios_collapse_cell": int(sub_s.cell.sum()),
                     "share_datasets_strict": float(sub_d.strict.mean()),
-                    "share_of_720000_evals_in_collapse_cells": float(sub_d.cell.sum() / 720),
-                    "share_of_720000_evals_in_strict_datasets": float(sub_d.strict.sum() / 720),
+                    "share_of_720000_evals_in_collapse_cells": float(sub_d.cell.sum() / N_DATASETS),
+                    "share_of_720000_evals_in_strict_datasets": float(sub_d.strict.sum() / N_DATASETS),
                     "AG_inside_collapse_cells": float(sub_d[sub_d.cell].ag.mean()) if sub_d.cell.any() else None,
                     "AG_outside_collapse_cells": float(sub_d[~sub_d.cell].ag.mean()),
                     "by_sep": {_lvl(s_): {"khatR2": float(sub_d[sub_d.sep == s_].r2.mean()),

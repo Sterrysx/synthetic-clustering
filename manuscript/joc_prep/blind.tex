@@ -22,7 +22,9 @@
 %  Author block: in blind mode \author, \affil, \email, \orcid, \equalcont,
 %  \corrauthor are swallowed, and a single neutral line is printed instead,
 %  so the \author/\affil lines in the document do not need to be touched.
-%  PDF metadata: pdfauthor is cleared in blind mode.
+%  PDF metadata: the Info dictionary is emptied in blind mode (see below).
+%  Integrated in ../main.tex and ../supplementary.tex (v5): there the default
+%  is \SetBlind{false}; ../build_submission.sh sets it to true.
 % =====================================================================
 \newif\ifblind
 \ifdefined\SetBlind \csname blind\SetBlind\endcsname \else \blindtrue \fi
@@ -59,6 +61,13 @@
   \providecommand\orcid[1]{}\renewcommand\orcid[1]{}
   \providecommand\equalcont[1]{}\renewcommand\equalcont[1]{}
   \providecommand\corrauthor[1]{}
-  \AtBeginDocument{\hypersetup{pdfauthor={},pdfkeywords={}}}
+  % empty PDF Info dictionary (title, author, subject, keywords, creator,
+  % producer), no creation/modification date, no trailer ID, and no
+  % /PTEX.* keys (file names, banner) from included figure PDFs
+  \AtBeginDocument{\hypersetup{pdftitle={},pdfauthor={},pdfsubject={},
+    pdfkeywords={},pdfcreator={},pdfproducer={}}}
+  \ifdefined\pdfinfoomitdate \pdfinfoomitdate=1 \fi
+  \ifdefined\pdftrailerid \pdftrailerid{} \fi
+  \ifdefined\pdfsuppressptexinfo \pdfsuppressptexinfo=-1 \fi
 \fi
 \makeatother

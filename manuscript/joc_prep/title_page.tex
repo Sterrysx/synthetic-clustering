@@ -2,15 +2,16 @@
 %  title_page.tex -- separate (non-anonymous) title page for the Journal of
 %  Classification submission.  JoC uses double-anonymous review, so author
 %  names, affiliations and the identifying declarations live here and NOT in
-%  the blinded manuscript.  Build from joc_prep/:  ./build_joc.sh title_page
-%  (after copying this file to test/) or with latexmk in any folder that can
-%  see sn-jnl.cls, joc_referee.tex and joc_bib.tex.
+%  the blinded manuscript.  Build from manuscript/ (v5):
+%      ./build_submission.sh title      (-> submission/title_page.pdf)
+%  or, on a normal TeX installation, `pdflatex joc_prep/title_page' run in
+%  manuscript/ (paths below are relative to manuscript/).
 %
 %  Everything in \TODO{...} is a placeholder that must be completed by the
 %  authors before submission; the red colour makes them impossible to miss.
 % =====================================================================
 \documentclass[pdflatex,referee]{sn-jnl}
-\input{joc_referee}
+\input{joc_prep/joc_referee}
 \pdfmapfile{=local.map}          %% build-machine workaround; delete elsewhere
 \usepackage{xcolor}
 \usepackage{amsmath}    % sn-jnl.cls calls \allowdisplaybreaks at \begin{document}
@@ -20,13 +21,14 @@
 
 \begin{document}
 
-\title{Downstream Utility of Synthetic Data for Clustering}
+\title{Cluster Analysis of CART-Synthesised Data: A Factorial Simulation of
+       $k$-Means and Ward's Linkage}
 
 \author[1]{Oriol Farr\'es Vilar}
-\author[2]{Jordi Cort\'es}
+\author[2,5]{Jordi Cort\'es}
 \author[3]{Xinnuo Chen}
 \author[4]{Victoria L\'opez}
-\author[2]{Daniel Fern\'andez}
+\author[5]{Daniel Fern\'andez}
 
 \affil[1]{Department of Computer Science,
           Universitat Polit\`ecnica de Catalunya, Barcelona, Spain}
@@ -35,15 +37,21 @@
 \affil[3]{Department of Statistical Science,
           University College London, London, United Kingdom}
 \affil[4]{CUNEF Universidad, Madrid, Spain}
+% Oct 2026: IRIS affiliation for D. Fern\'andez and J. Cort\'es (Cort\'es also keeps [2])
+\affil[5]{Institute for Research and Innovation in Health (IRIS),
+          Universitat Polit\`ecnica de Catalunya -- BarcelonaTech (UPC), 08028 Barcelona, Spain}
 
-\abstract{Separate title page of a manuscript submitted to the \emph{Journal
-of Classification}; the manuscript itself is anonymised for double-anonymous
-review. \TODO{paste the final abstract ($\le 150$ words) here}}
+% The abstract is read from ../abstract.tex, the same file main.tex uses.
+\abstract{\input{abstract}}
 
-\keywords{Synthetic data, Cluster analysis, Statistical disclosure control,
-          Analytical utility, Simulation study}
+\keywords{Synthetic data, CART synthesis, \texttt{synthpop}, $k$-means, Ward's
+          linkage, Cluster stability, Bootstrap}
 
 \maketitle
+
+\noindent\emph{Separate title page of a manuscript submitted to the Journal of
+Classification; the manuscript and its supplementary material are anonymised
+for double-anonymous review.}
 
 \section*{Corresponding author}
 
@@ -70,14 +78,10 @@ Daniel Fern\'andez: \TODO{ORCID}
 
 \section*{Declarations}
 
-\noindent\textbf{Funding.} \TODO{grant agencies and grant numbers for each
-author, or ``The authors did not receive support from any organization for the
-submitted work.''}
+\noindent\textbf{Funding.} Daniel Fern\'andez is a Serra-H\'unter Fellow, a member of the Centro de Investigaci\'on Biom\'edica en Red de Salud Mental (CIBERSAM), and his work has been supported by MICIU/AEI/10.13039/501100011033 (Spain) and by FEDER (EU) [PID2023-148033OB-C21], by grant 2021 SGR 01421 (GRBIO) administrated by the Departament de Recerca i Universitats de la Generalitat de Catalunya (Spain), and by the Marsden Fund (Award Number E11772-5342) from New Zealand Government funding.
 
 \medskip
-\noindent\textbf{Competing interests.} \TODO{``The authors have no relevant
-financial or non-financial interests to disclose.'' or the relevant
-disclosure; one statement covering all five authors}
+\noindent\textbf{Competing interests.} The authors have no relevant financial or non-financial interests to disclose.
 
 \medskip
 \noindent\textbf{Author contributions.} \TODO{contribution of each author,

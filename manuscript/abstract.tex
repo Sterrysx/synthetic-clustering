@@ -1,0 +1,18 @@
+% Abstract of the main article (<= 150 words; JoC). Read by main.tex and by
+% joc_prep/title_page.tex, so that the two cannot drift apart.
+% Oct 2026: first sentences and the k-means sentence reworded by Jordi Cort\'es,
+% merged to the 150-word limit.
+Synthetic data allow information to be shared while protecting confidential
+records, but their usefulness depends on whether analyses of the synthetic data
+reproduce those of the original data. We investigate this for cluster analysis
+through a factorial simulation of 144 scenarios crossing separation, number of
+groups, dimensionality, correlation and distribution family (720{,}000
+evaluations), applying $k$-means and Ward's linkage to data synthesised by
+sequential CART. Agreement between the numbers of clusters estimated from
+synthetic and original data rises with separation. Overall, $k$-means recovers
+the original number more often than Ward's method ($0.84$ vs.\ $0.81$), on
+skewed Gamma data ($0.81$ vs.\ $0.73$) but not on Normal data ($0.87$ vs.\
+$0.89$). A bootstrap null shows that this reflects the greater stability of the
+$k$-means estimate, not smaller damage from CART, and that resampling alone
+reproduces most centroid and dispersion distortion. A real-data case study
+agrees. Utility should be judged against a resampling reference.%

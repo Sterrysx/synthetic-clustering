@@ -18,16 +18,39 @@
 %  This compiles against Springer Nature's sn-jnl.cls (v3.x), which is in this
 %  folder together with sn-basic.bst.
 %
-%  IMPORTANT: sn-jnl.cls here was obtained from a third-party GitHub mirror
-%  because Springer's own download page was unreachable from the machine this
-%  was built on. Before submitting, replace it with the official copy from
-%  Springer's LaTeX author-support page (or open the template on Overleaf and
-%  download the zip) and rebuild. The document body should not need changes.
+%  sn-jnl.cls and sn-basic.bst are Springer Nature's official copies, from the
+%  journal article template package (December 2024 version) on Springer's LaTeX
+%  author-support page (replaced 27 Oct 2026; the earlier third-party copies are
+%  in _backup_v5_preDJ/class_thirdparty/).
 %
 %  \pdfmapfile below is a workaround for a broken font-map index on the build
 %  machine. On a normal TeX installation, delete that one line.
+%
+%  BUILD VARIANTS (see joc_prep/README.md; ./build_submission.sh does this)
+%  ---------------------------------------------------------------------
+%  Two switches, set before this file is read:
+%    \def\SetReferee{}     JoC referee layout: 12 pt, double-spaced, single
+%                          column, A4 with 30 mm margins (joc_prep/joc_referee)
+%    \def\SetBlind{true}   anonymised build (joc_prep/blind.tex): author block,
+%                          repository URL and identifying clauses removed,
+%                          PDF metadata emptied
+%  e.g. pdflatex -jobname=main_blind '\def\SetReferee{}\def\SetBlind{true}\input{main}'
+%  Without switches (`./build.sh main') this file gives the named version in
+%  the normal sn-jnl layout. The JoC reference style (joc_prep/sn-joc.bst,
+%  via joc_prep/joc_bib.tex) is used in every variant.
 % =====================================================================
-\documentclass[pdflatex,sn-basic]{sn-jnl}
+\ifdefined\SetReferee
+  \documentclass[pdflatex,referee]{sn-jnl}
+  \input{joc_prep/joc_referee}
+\else
+  \documentclass[pdflatex]{sn-jnl}
+  % sn-jnl's \Authorfont sets \boldmath, which leaks into the abstract
+  % (numbers and math printed bold); joc_referee.tex fixes the same leak.
+  \makeatletter\g@addto@macro\abstractfont{\unboldmath}\makeatother
+\fi
+\input{joc_prep/joc_bib}
+\providecommand\SetBlind{false}
+\input{joc_prep/blind}
 
 \pdfmapfile{=local.map}          %% build-machine workaround; delete elsewhere
 
@@ -59,10 +82,10 @@
        $k$-Means and Ward's Linkage}
 
 \author[1]{Oriol Farr\'es Vilar}
-\author[2]{Jordi Cort\'es}
+\author[2,5]{Jordi Cort\'es}
 \author[3]{Xinnuo Chen}
 \author[4]{Victoria L\'opez}
-\author[2]{Daniel Fern\'andez}
+\author[5]{Daniel Fern\'andez}
 
 \affil[1]{Department of Computer Science,
           Universitat Polit\`ecnica de Catalunya, Barcelona, Spain}
@@ -71,23 +94,14 @@
 \affil[3]{Department of Statistical Science,
           University College London, London, United Kingdom}
 \affil[4]{CUNEF Universidad, Madrid, Spain}
+% Oct 2026: IRIS affiliation for D. Fern\'andez and J. Cort\'es (Cort\'es also keeps [2])
+\affil[5]{Institute for Research and Innovation in Health (IRIS),
+          Universitat Polit\`ecnica de Catalunya -- BarcelonaTech (UPC), 08028 Barcelona, Spain}
 
-\abstract{Synthetic data replace confidential records, so their value depends
-on whether analyses of the release reproduce the original ones. We study
-this for cluster analysis in a factorial simulation of 144 scenarios crossing
-separation, number of groups, dimensionality, correlation and distribution
-family (720{,}000 evaluations), applying $k$-means and Ward's linkage to data
-synthesised by sequential CART. Agreement between the numbers of groups
-estimated from synthetic and original data rises with separation. $k$-means
-reproduces the original number more often than Ward ($0.84$ versus $0.81$),
-on skewed Gamma data ($0.81$ versus $0.73$) but not on Normal data ($0.87$
-versus $0.89$). A bootstrap null shows that this reflects the greater
-stability of the $k$-means estimate under resampling, not smaller damage from
-CART. Resampling alone also reproduces most centroid and dispersion distortion.
-Utility should be judged against a resampling reference.}
+\abstract{\input{abstract}}
 
 \keywords{Synthetic data, CART synthesis, \texttt{synthpop}, $k$-means, Ward's
-          linkage, Number of clusters, Cluster stability, Bootstrap null}
+          linkage, Cluster stability, Bootstrap}
 
 \maketitle
 
@@ -173,7 +187,7 @@ check.
 This article asks whether CART-based sequential synthesis, the default
 non-parametric engine of \texttt{synthpop} \citep{nowok2016} and a widely used
 method for tabular data, preserves the structure that clustering relies on.
-This study extends the line of inquiry opened by \citet{chen2025}, which
+This study extends the line of inquiry opened by \blindalt{\citet{anon2025}}{\citet{chen2025}}, which
 established a simulation harness for this question but restricted attention to
 $k$-means on Normal data and relied on a resemblance statistic that proved
 insensitive to structural quality. We broaden the scope in three directions: a
@@ -210,7 +224,8 @@ groups used to simulate the original dataset, and the number of clusters
 recovered from that original dataset by the same algorithm. Each synthetic
 result is also set against the same quantity computed on bootstrap resamples
 of the original dataset, which separates the effect of CART from ordinary
-resampling variability.
+resampling variability. Finally, we apply the same comparison to a real
+dataset, the diabetes data of \citet{reaven1979}.
 
 % =====================================================================
 \section{Methods}
@@ -323,7 +338,7 @@ simulated, and each original dataset is synthesised $m = 1000$ times, resulting
 in $144 \times 5 \times 1000 = 720{,}000$ synthetic-versus-original
 evaluations.
 
-\begin{table}[t]
+\begin{table}[!tbp]
 \centering
 \caption{Factors of the simulation design and the question each addresses.
          Crossing all five gives 144 scenarios; with $n=5$ independent original
@@ -397,7 +412,7 @@ appended as the last variable of the synthesis sequence, so it does not
 influence the synthesis of the features; it is never used by the clustering
 algorithms.
 
-\paragraph{Software and seeds.} Original data were generated and synthesised
+\paragraph{Software and seeds.}\label{sec:software} Original data were generated and synthesised
 under \textsf{R} 4.3 \citep{rcore2024} with \texttt{synthpop} 1.9.2
 \citep{nowok2016}, \texttt{mvtnorm} 1.4.2 and \texttt{arrow} 25.0.0; the
 \texttt{rpart} version of that run was not recorded, and the synthetic draws
@@ -416,7 +431,11 @@ is reproduced only under the \texttt{en\_US.UTF-8} collation (the C collation
 gives a different index), and the distributed per-scenario seed table records
 $g$ explicitly. Every $k$-means fit, on original and synthetic data alike, uses
 \texttt{random\_state = 42} with ten initialisations, so the original and
-synthetic fits share their starting points. Both stages are embarrassingly
+synthetic fits share their starting points. Refitting the synthetic data with
+independent seeds (replicate 1 and the first 20 draws of every scenario,
+2{,}880 pairs) left $\hat{k}_S$ unchanged in $95.7\%$ of pairs and changed AG
+by less than $0.001$ ($0.832$ versus $0.831$) and MCD, MVD and $\Delta G$ by at
+most $0.002$, so the shared seed does not drive the results. Both stages are embarrassingly
 parallel over scenarios and were distributed across $18$ worker processes on a
 single multi-core workstation (Section~S8 of the supplementary material).
 
@@ -436,7 +455,7 @@ would rescale away part of the very distortion the metrics are meant to detect
 For a dataset and an algorithm, the number of groups is estimated by maximising
 the average silhouette width \citep{rousseeuw1987} over the fixed candidate
 range $\{2,\dots,8\}$, applied identically to original and synthetic data.
-Earlier work \citep{chen2025} used the range $\{2,\dots,\min(k+3,8)\}$, which
+Earlier work \blindalt{\citep{anon2025}}{\citep{chen2025}} used the range $\{2,\dots,\min(k+3,8)\}$, which
 ties the search to the planted $k$; the count analyses under that range are
 reported as a sensitivity analysis in Section~S3 of the supplementary material.
 We write $\hat{k}_R$ for the estimate obtained from an original dataset and
@@ -739,7 +758,7 @@ under both references.
 \label{fig:recovery}
 \end{figure}
 
-\begin{table}[t]
+\begin{table}[!tbp]
 \centering
 \caption{Agreement in the number of groups by design factor, over the full
          720{,}000-evaluation design, under the two references of
@@ -801,7 +820,7 @@ for $k$-means and $17.4\%$ for Ward. Two independent original datasets
 from the same scenario, a coarser reference that also changes the centroid
 geometry, agree in $0.801$ and $0.767$ of pairs (Supplementary Section~S4).
 
-\begin{table}[t]
+\begin{table}[!tbp]
 \centering
 \caption{Agreement with the original estimate after CART synthesis
          ($\mathrm{AG}$) and after bootstrap resampling of the original data
@@ -835,8 +854,8 @@ and the floor already places $k$-means below Ward (in 121, 135 and 132 of the
 almost every scenario (MCD 144 and 143 of 144 for $k$-means and Ward; MVD 144
 and 141; $\Delta G$ 144 and 129; $p < 10^{-20}$ for each), but the excess is
 not smaller for $k$-means: it is larger for MCD ($0.081$ versus $0.057$;
-Wilcoxon $p = 8.8 \times 10^{-6}$) and equal for MVD ($0.069$ versus $0.068$;
-$p = 0.973$) and for $\Delta G$ ($0.009$ versus $0.008$; $p = 0.462$). The
+Wilcoxon $p = 8.8 \times 10^{-6}$) and equal for MVD ($0.069$ versus $0.068$; $p = 0.973$) and nearly equal for
+$\Delta G$ ($0.009$ versus $0.008$; $p = 0.462$, but $p = 0.002$ at $n = 50$). The
 lower geometric distortion of $k$-means on synthetic data is therefore
 inherited from its lower distortion under resampling, not produced by a
 smaller effect of CART.
@@ -874,7 +893,7 @@ introduces.
 \label{fig:fidelity}
 \end{figure}
 
-\begin{table}[t]
+\begin{table}[!tbp]
 \centering
 \caption{Geometric fidelity after CART synthesis (observed), under bootstrap
          resampling of the original data (floor, $B = 30$) and their
@@ -891,51 +910,25 @@ introduces.
 \input{tables/tab_floor.tex}
 \end{table}
 
-Total dispersion distortion grows with dimensionality.
-Figure~\ref{fig:balance}(a) shows MVD rising with the number of variables: for
-$k$-means from $0.06$ ($95\%$ interval $0.05$--$0.08$) at $p = 2$ to $0.39$
-($0.32$--$0.47$) at $p = 10$, and for Ward from $0.13$ to $0.65$. Because $v_j$
-in Eq.~\eqref{eq:mvd} is a sum of squared deviations over the $p$ coordinates,
-this growth should be read per coordinate: $\mathrm{MVD}/p$ is roughly constant
-($k$-means $0.032$, $0.040$ and $0.039$ at $p = 2, 5, 10$; Ward $0.067$,
-$0.078$ and $0.065$). The floor grows in the same way ($k$-means $0.047$,
-$0.144$ and $0.259$), so much of the accumulation is resampling noise summed
-over coordinates; the per-coordinate excess attributable to CART increases
-only mildly with $p$ ($k$-means $0.008$, $0.011$ and $0.013$; Ward $0.006$,
-$0.010$ and $0.014$). Unlike the count, which is protected at high $p$ and low
-$\sigma$ by the collapse of $\hat{k}$ onto small values
-(Section~\ref{sec:count}), the within-cluster dispersion is measured at the
-planted $k$ and so exposes this accumulation directly.
+Total dispersion distortion grows with dimensionality (Supplementary
+Fig.~S3a): MVD rises from $0.06$ at $p = 2$ to $0.39$ at $p = 10$ for $k$-means
+and from $0.13$ to $0.65$ for Ward. Because $v_j$ in Eq.~\eqref{eq:mvd} sums
+squared deviations over the $p$ coordinates, $\mathrm{MVD}/p$ is roughly
+constant ($k$-means $0.032$, $0.040$ and $0.039$ at $p = 2, 5, 10$; Ward
+$0.067$, $0.078$ and $0.065$) and the floor grows in the same way, so much of
+the accumulation is resampling noise summed over coordinates; the
+per-coordinate excess attributable to CART increases only mildly with $p$
+($k$-means $0.008$, $0.011$ and $0.013$; Ward $0.006$, $0.010$ and $0.014$).
 
-Figure~\ref{fig:balance}(b) shows the group-balance error $\Delta G$ by
-distribution family. Both algorithms preserve cluster sizes better on Normal
-than on Gamma data ($k$-means $0.028$ versus $0.032$; Ward $0.057$ versus
-$0.065$), consistent with the block artefact being more disruptive on skewed
-groups. $k$-means yields systematically lower $\Delta G$ than Ward for both
-distributions (lower in 138 of 144 scenarios; overall $0.030$ versus $0.061$),
-but the floor shows the same ordering ($0.021$ versus $0.053$): because the
-planted groups have equal sizes, the difference reflects the fact that the
-cluster sizes of a $k$-means partition fluctuate less under resampling, and
-hence also under synthesis. This is consistent with the known tendency of the
-$k$-means criterion to produce clusters of similar size \citep{xiong2009}.
-Whether $k$-means would also understate a genuine size imbalance cannot be
-tested with balanced groups, and is left to future work
-(Section~\ref{sec:future}).
-
-\begin{figure}[t]
-\centering
-\includegraphics{figures/fig_balance.pdf}
-\caption{(a) Mean variance difference by dimensionality: total distortion
-  accumulates as dimensions are added, more so for Ward; per coordinate it is
-  roughly constant (see text). (b) Group-balance error $\Delta G$ by
-  distribution family. Solid bars are the observed means of the scenario-level
-  means after CART synthesis; the hatched inner bars are the bootstrap floor
-  ($B = 30$), so the solid part above each hatched bar is the excess
-  attributable to CART. Error bars are $\pm 1.96$ standard errors of the
-  observed values across scenarios (48 per level of $p$, 72 per
-  distribution).}
-\label{fig:balance}
-\end{figure}
+Group balance is better preserved on Normal than on Gamma data (Supplementary
+Fig.~S3b; $\Delta G$ $0.028$ versus $0.032$ for $k$-means, $0.057$ versus
+$0.065$ for Ward). $k$-means yields lower $\Delta G$ than Ward (in 138 of 144
+scenarios; $0.030$ versus $0.061$), but the floor shows the same ordering
+($0.021$ versus $0.053$): with equal planted group sizes, the cluster sizes of
+a $k$-means partition fluctuate less under resampling, and hence under
+synthesis, consistent with the tendency of the $k$-means criterion to produce
+clusters of similar size \citep{xiong2009}. Whether $k$-means would understate
+a genuine size imbalance is left to future work (Section~\ref{sec:future}).
 
 \subsection{Distribution family}
 \label{sec:distribution}
@@ -1030,9 +1023,9 @@ more stable under resampling for $k$-means, particularly on skewed data, and
 synthesis inherits that stability. Beyond resampling, $k$-means loses slightly
 more agreement than Ward (difference in excess $-0.017$, $W = 2846$,
 $p = 0.040$), again only on Gamma data ($-0.034$, $p = 0.024$; concentrated at
-$\sigma = 0.1$, $-0.082$, and $\sigma = 2$, $-0.058$), with no difference on
-Normal data ($p = 0.640$); with 30 resamples per dataset these excess
-comparisons are modest evidence. The higher agreement of $k$-means on
+$\sigma = 0.1$, $-0.082$, and $\sigma = 2$, $-0.058$), with no difference on Normal data ($p = 0.640$). A replication with $n = 50$
+original datasets per scenario gives the same difference with much stronger
+evidence ($-0.018$, $p = 1.2 \times 10^{-5}$; Supplementary Section~S12). The higher agreement of $k$-means on
 synthetic data thus reflects the greater stability of its $\hat{k}$, not
 smaller damage from CART, and the same holds for the geometric metrics
 (Section~\ref{sec:geometry}).
@@ -1047,6 +1040,108 @@ synthesis. This is reassuring, but it also means that silhouette alone would
 fail to flag the geometric distortions the other metrics detect, an
 instructive negative result for anyone tempted to validate a synthetic release
 with an internal index.
+
+% =====================================================================
+\section{Case study: the Reaven--Miller diabetes data}\label{sec:case}
+
+To illustrate the conclusions from the simulation study, we apply the same
+procedure to the diabetes data \citep{reaven1979}. The data comprise $145$
+patients classified clinically as normal ($76$), chemical diabetes ($36$) or
+overt diabetes ($33$). Following \citet{reaven1979}, we use three of the five
+variables in the distributed data: the areas under the plasma glucose and
+insulin curves during an oral glucose tolerance test, and the steady-state
+plasma glucose (SSPG), taken from the copy of the data distributed with the
+\textsf{R} package \texttt{rrcov} \citep{todorov2009}. The three variables are
+right-skewed (skewness $1.8$, $1.8$ and $0.7$), and glucose area and SSPG are
+strongly correlated ($r = 0.77$). As in the simulation, the data were
+standardised with the means and standard deviations of the original, and
+$m = 1000$ synthetic datasets were generated with the settings of the
+simulation: CART with proper synthesis and a minimum leaf size of ten, with the
+variables synthesised in the order glucose, insulin and SSPG and the clinical
+class last. The bootstrap null used $B = 1000$ resamples of the original rows.
+Uncertainty is Monte Carlo uncertainty over draws only (\textsf{R} 4.5.3,
+\texttt{synthpop} 1.9.3, \texttt{rpart} 4.1.27; evaluation with the code of the
+simulation). In the synthetic data the block artefact of
+Figs.~\ref{fig:normal}--\ref{fig:gamma} appears as runs of repeated values and
+empty bands (Fig.~\ref{fig:diabetes}a--b).
+
+\citet{reaven1979} identified three groups, a central body and two wings in a
+rotating PRIM-9 display, and a three-group nearest-mean clustering
+\citep{friedman1967} reproduced the clinical classification closely ($84$,
+$35$ and $26$ patients, with $20$ patients reassigned). There the number of
+groups was fixed in advance; estimated from the data, as in our design, the
+silhouette selects $\hat k = 2$ for both methods, but only by
+a small margin over three groups (average silhouette width $0.571$ versus
+$0.547$ for $k$-means, $0.567$ versus $0.544$ for Ward). The original data thus
+sit close to the boundary between two and three groups, and the selected
+$\hat k$ is expected to be unstable under any perturbation. This near tie
+governs the synthetic results (Fig.~\ref{fig:diabetes}c): the synthetic data
+reproduce $\hat k = 2$ in $62.9\%$ of draws for $k$-means and $63.2\%$ for Ward
+(AG), and the two methods do not differ (exact McNemar test on the paired
+draws, $58$ versus $61$ discordant draws, $p = 0.85$). Resampling the original
+rows gives almost the same agreement ($\mathrm{AG}_0 = 0.667$ and $0.637$), so
+the excess over the null is $-0.038$ for $k$-means and $-0.005$ for Ward (Monte
+Carlo standard error $0.021$), neither distinguishable from zero.
+
+The partition-level metrics use the clinical $k = 3$, the analogue of the
+planted $k$ in the simulation. To measure whether the same patients are grouped
+together without matching synthetic to original records, each synthetic dataset
+is partitioned with $k = 3$, every original patient is assigned to the nearest
+of its cluster means \citep{dudoit2002,tibshirani2005}, and the adjusted Rand
+index (ARI; \citealp{hubert1985}) compares this assignment with the original
+partition of the same $145$ patients. ARI is $1$ for identical partitions and
+near $0$ for chance agreement; for Ward, whose partition is not a
+nearest-centroid one, the ceiling is $0.955$, which the bootstrap null
+includes.
+
+All metrics show the same qualitative pattern as the simulation, with mostly
+larger magnitudes (Table~\ref{tab:case}). Every geometric metric exceeds its
+bootstrap floor for both methods by more than four Monte Carlo standard errors.
+ARI is $0.856$ for $k$-means and $0.797$ for Ward, below its bootstrap null by
+$0.066$ and $0.040$: synthesis also moves patients between groups beyond what
+resampling does, as it does over the whole simulation ($0.036$ and $0.011$
+below the null; Supplementary Section~S10). Against the clinical classes, the
+original partitions give an ARI of $0.504$ ($k$-means) and $0.536$ (Ward), the
+partitions transferred from the synthetic data $0.481$ and $0.471$, and those
+from resamples $0.495$ and $0.480$: the synthetic data recover the diagnostic
+groups slightly less well than a resample. As the clinical classes were defined
+mainly from the glucose tolerance test, this comparison is partly circular.
+
+As in the simulation, the count of groups is limited mainly by how stable
+$\hat k$ is on the original data, while CART adds a measurable distortion of
+the partition itself. The advantage of $k$-means in AG seen for skewed simulated
+data does not appear here. This is consistent with its explanation: $k$-means
+is only slightly more stable under resampling ($\mathrm{AG}_0$ $0.667$ versus
+$0.637$; exact McNemar test on the paired resamples, $86$ versus $56$
+discordant, $p = 0.015$), and synthesis removes that margin (AG $0.629$ versus
+$0.632$). In all six orders of the three variables
+(Supplementary Section~S11) every geometric excess is positive, every ARI
+excess negative and the AG of the two methods within $0.05$; count agreement
+falls furthest below its null when glucose area is synthesised last (AG excess
+down to $-0.12$ for $k$-means and $-0.14$ for Ward).
+
+\begin{figure}[t]
+\centering
+\includegraphics{figures/fig_diabetes.pdf}
+\caption{Diabetes data, $N = 145$. (a) Original data by clinical class.
+(b) One CART synthetic dataset (single colour, as in
+Figs.~\ref{fig:normal}--\ref{fig:gamma}). (c) Silhouette-selected $\hat k$
+over $m = 1000$ synthetic datasets (filled) and $B = 1000$ bootstrap resamples
+(open); on the original data both methods select $\hat k = 2$.}
+\label{fig:diabetes}
+\end{figure}
+
+\begin{table}[!tbp]
+\centering
+\caption{Diabetes case study: means over $m = 1000$ synthetic datasets and
+  $B = 1000$ bootstrap resamples, and the excess (synthetic minus bootstrap).
+  AG uses $\hat k$, the other metrics $k = 3$; ARI (clinical) compares the
+  transferred partition with the clinical classes. Monte Carlo standard errors
+  of the excess: $0.021$ for AG, $0.002$--$0.010$ otherwise.}
+\label{tab:case}
+\small
+\input{tables/tab_case.tex}
+\end{table}
 
 % =====================================================================
 \section{Discussion}
@@ -1084,8 +1179,7 @@ both methods ($0.032$ and $0.016$) and, if anything, slightly larger for
 $k$-means. The geometry tells the same story. $k$-means shows lower centroid,
 dispersion and cluster-size distortion on synthetic data, but most of each
 metric is reproduced by resampling alone, and the excess attributable to CART
-is not smaller for $k$-means (larger for MCD, equal for MVD, $\Delta G$ and
-RVD). For an applied analyst, the practical implication is that the choice of
+is not smaller for $k$-means (larger for MCD, equal or nearly equal for MVD, $\Delta G$ and RVD). For an applied analyst, the practical implication is that the choice of
 algorithm matters more for the fidelity of a synthetic-data analysis than
 accuracy against a ground truth would suggest, and that the reason is the
 stability of the estimator rather than the generator.
@@ -1123,7 +1217,7 @@ be repurposed as general-utility diagnostics rather than task-specific ones.
 
 \subsection{Relation to previous work}
 
-The study extends \citet{chen2025} in three ways: a second algorithm that
+The study extends \blindalt{\citet{anon2025}}{\citet{chen2025}} in three ways: a second algorithm that
 shares the criterion of $k$-means but optimises it differently, a skewed
 distribution family that exposes tree-synthesis artefacts, and structural
 metrics that compare partitions recovered from the original and synthetic
@@ -1183,15 +1277,17 @@ validation sample that the data holder is able to release.
 \subsection{Limitations}
 \label{sec:limitations}
 
-The evaluation uses controlled simulations with known ground truth rather than
-real data, and its conclusions are scoped to the grid studied: correlations up
+The evaluation rests on controlled simulations with known ground truth,
+complemented by a single small real dataset (Section~\ref{sec:case}), and its
+conclusions are scoped to the grid studied: correlations up
 to $\rho = 0.4$, a single Gamma shape, $N = 1000$ and exactly equal group
 sizes. This isolates mechanisms cleanly but limits direct generalisation to
 data with missingness, mixed types, unequal group sizes and unknown
 data-generating processes. The generator is limited to CART with a single
 parameterisation (minimum leaf size ten, fixed variable order) and the
-algorithms to $k$-means and Ward. Sample size was fixed at $N = 1000$, so
-small-sample behaviour is unexamined. The number of groups is selected by the
+algorithms to $k$-means and Ward. Sample size was fixed at $N = 1000$ in the
+simulation, so small-sample behaviour is examined only through the case study
+($N = 145$). The number of groups is selected by the
 silhouette criterion over $\hat{k} \ge 2$, so a single-cluster solution can
 never be chosen, even when the groups overlap so strongly that one cluster is
 the most reasonable description; other selection rules \citep{milligan1985}
@@ -1200,8 +1296,9 @@ estimator collapses onto the smallest candidate, as happens at low $\sigma$,
 high $p$ and $\rho = 0.4$, and should be read together with the bootstrap null
 and the geometric metrics. The bootstrap null rests on $B = 30$ resamples per
 original dataset, so comparisons of small excesses between the algorithms
-carry Monte Carlo error. Every $k$-means fit uses the same seed, so the
-original and synthetic fits share their initialisations. The Wilcoxon tests
+carry Monte Carlo error; a replication with ten times as many original datasets
+confirms them (Supplementary Section~S12). Every $k$-means fit uses the same seed; a check with
+independent seeds (Section~\ref{sec:software}) showed no material effect. The Wilcoxon tests
 and the $\pm 1.96$ standard-error bands are computed across the 144 scenarios
 of a designed grid, so they compare methods over that grid rather than over a
 population of scenarios.
@@ -1248,15 +1345,15 @@ in particular Gaussian mixture models with the number of components chosen by
 BIC \citep{fraley2002,scrucca2016}, which can also return a single cluster, and
 non-convex and density-based methods; unequal group sizes and stronger
 correlations between features; varying $N$ to probe small-sample behaviour;
-and chance-corrected partition comparisons such as the adjusted Rand index
-\citep{hubert1985} computed on a common set of points. A promising direction
+and a fuller study of the partition-level agreement introduced in the case
+study, for example with transfer rules other than the nearest cluster mean. A promising direction
 is to model the discrepancy $\Delta$ of Eq.~\eqref{eq:discrepancy} directly as
 a learned function of the design factors, turning the utility surface itself
 into a predictive tool.
 
 As a concrete next step, we propose applying the same comparison to the
-wearable dataset described in \citet{vidiella2025}, to which we have direct
-access. Beyond providing a real-data test of the present design, this dataset
+wearable dataset described in
+\citet{vidiella2025}\blindhide{, to which we have direct access}. Beyond providing a second and larger real-data test of the present design, this dataset
 would allow a comparison that neither study can perform alone. The present work
 evaluates synthesis as substitution, in which the synthetic dataset replaces
 the original. The applied study instead evaluates augmentation, in which the
@@ -1304,8 +1401,12 @@ Transferring the comparison to real data therefore requires two adaptations:
 the planted partition must be replaced by a reference obtained from the
 original data, and agreement must be calibrated against a resampling null, as
 done here.
-We believe such a transfer would be informative rather than merely
-confirmatory.
+% CS-EDIT (case study added; for Victoria's review together with the VL-EDITs)
+The diabetes case study (Section~\ref{sec:case}) makes both adaptations and
+reproduces the pattern of the simulation: agreement in the number of groups
+stays close to its resampling reference, while CART adds distortion to every
+geometric metric. Larger and more varied datasets would be informative rather
+than merely confirmatory.
 % VL-EDIT (the uncited empirical claims "routinely show correlations above
 % 0.95" and "skewness values considerably higher" are reworded as
 % possibilities)
@@ -1347,20 +1448,27 @@ objectives, and the computational cost of the study.
 
 \section*{Declarations}
 
-\noindent \textbf{Funding:} [To be completed by the authors.]
+% Blind build: funding, competing interests and author contributions are on
+% the separate title page (joc_prep/title_page.tex).
+\noindent \textbf{Funding:} \blindalt{Given on the separate title page
+  (removed for anonymous review).}{Daniel Fern\'andez is a Serra-H\'unter Fellow, a member of the Centro de Investigaci\'on Biom\'edica en Red de Salud Mental (CIBERSAM), and his work has been supported by MICIU/AEI/10.13039/501100011033 (Spain) and by FEDER (EU) [PID2023-148033OB-C21], by grant 2021 SGR 01421 (GRBIO) administrated by the Departament de Recerca i Universitats de la Generalitat de Catalunya (Spain), and by the Marsden Fund (Award Number E11772-5342) from New Zealand Government funding.}
 
-\noindent \textbf{Competing interests:} [To be completed by the authors.]
+\noindent \textbf{Competing interests:} \blindalt{Given on the separate title
+  page (removed for anonymous review).}{The authors have no relevant financial or non-financial interests to disclose.}
 
-\noindent \textbf{Data availability:} All data analysed in this study are
-  simulated; they can be regenerated exactly from the configuration file and
-  seeds distributed with the code.
+\noindent \textbf{Data availability:} The simulated data can be regenerated
+  exactly from the configuration file and seeds distributed with the code. The
+  diabetes data of the case study are distributed with the \textsf{R} package
+  \texttt{rrcov} \citep{todorov2009}.
 
 \noindent \textbf{Code availability:} The full pipeline, from data generation
   through to the figures and tables reported here, is available at
-  \url{https://github.com/Sterrysx/synthetic-clustering}. Every stage is driven
+  \repourl\blindalt{ (anonymised for review)}{}. Every stage is driven
   from a single configuration file and can be re-executed end to end.
 
-\noindent \textbf{Author contributions:} [To be completed by the authors.]
+\noindent \textbf{Author contributions:} \blindalt{Given on the separate
+  title page (removed for anonymous review).}{[To be completed by the
+  authors.]}
 
 \bibliography{refs}
 

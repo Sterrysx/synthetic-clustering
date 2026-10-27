@@ -1,0 +1,110 @@
+% =====================================================================
+%  title_page.tex -- separate (non-anonymous) title page for the Journal of
+%  Classification submission.  JoC uses double-anonymous review, so author
+%  names, affiliations and the identifying declarations live here and NOT in
+%  the blinded manuscript.  Build from manuscript/ (v5):
+%      ./build_submission.sh title      (-> submission/title_page.pdf)
+%  or, on a normal TeX installation, `pdflatex joc_prep/title_page' run in
+%  manuscript/ (paths below are relative to manuscript/).
+%
+%  Everything in \TODO{...} is a placeholder that must be completed by the
+%  authors before submission; the red colour makes them impossible to miss.
+% =====================================================================
+\documentclass[pdflatex,referee]{sn-jnl}
+\input{joc_prep/joc_referee}
+\pdfmapfile{=local.map}          %% build-machine workaround; delete elsewhere
+\usepackage{xcolor}
+\usepackage{amsmath}    % sn-jnl.cls calls \allowdisplaybreaks at \begin{document}
+\usepackage{manyfoot}   % sn-jnl.cls needs it at \begin{document}
+\setstretch{1.2}        % title page is not refereed text; keep it compact
+\newcommand\TODO[1]{\textcolor{red}{[\textbf{TO COMPLETE:} #1]}}
+
+\begin{document}
+
+\title{Cluster Analysis of CART-Synthesised Data: A Factorial Simulation of
+       $k$-Means and Ward's Linkage}
+
+\author[1]{Oriol Farr\'es Vilar}
+\author[2]{Jordi Cort\'es}
+\author[3]{Xinnuo Chen}
+\author[4]{Victoria L\'opez}
+\author[2]{Daniel Fern\'andez}
+
+\affil[1]{Department of Computer Science,
+          Universitat Polit\`ecnica de Catalunya, Barcelona, Spain}
+\affil[2]{Department of Statistics and Operations Research,
+          Universitat Polit\`ecnica de Catalunya, Barcelona, Spain}
+\affil[3]{Department of Statistical Science,
+          University College London, London, United Kingdom}
+\affil[4]{CUNEF Universidad, Madrid, Spain}
+
+% The abstract is read from ../abstract.tex, the same file main.tex uses.
+\abstract{\input{abstract}}
+
+\keywords{Synthetic data, CART synthesis, \texttt{synthpop}, $k$-means, Ward's
+          linkage, Number of clusters, Cluster stability, Bootstrap null}
+
+\maketitle
+
+\noindent\emph{Separate title page of a manuscript submitted to the Journal of
+Classification; the manuscript and its supplementary material are anonymised
+for double-anonymous review.}
+
+\section*{Corresponding author}
+
+\noindent\TODO{name of the corresponding author}\\
+E-mail: \TODO{institutional e-mail address}\\
+Postal address: \TODO{full postal address}\\
+Telephone: \TODO{telephone number, with country code}
+
+\noindent (The JoC submission page asks for e-mail, full postal address and
+telephone number of the submitting author.)
+
+\section*{ORCID identifiers}
+
+\noindent
+Oriol Farr\'es Vilar: \TODO{ORCID}\\
+Jordi Cort\'es: \TODO{ORCID}\\
+Xinnuo Chen: \TODO{ORCID}\\
+Victoria L\'opez: \TODO{ORCID}\\
+Daniel Fern\'andez: \TODO{ORCID}
+
+\section*{Acknowledgements}
+
+\noindent\TODO{acknowledgements, or delete this section}
+
+\section*{Declarations}
+
+\noindent\textbf{Funding.} \TODO{grant agencies and grant numbers for each
+author, or ``The authors did not receive support from any organization for the
+submitted work.''}
+
+\medskip
+\noindent\textbf{Competing interests.} \TODO{``The authors have no relevant
+financial or non-financial interests to disclose.'' or the relevant
+disclosure; one statement covering all five authors}
+
+\medskip
+\noindent\textbf{Author contributions.} \TODO{contribution of each author,
+e.g. in CRediT terms (Conceptualization, Methodology, Software, Formal
+analysis, Writing -- original draft, Writing -- review \& editing,
+Supervision). To be agreed by all five authors.}
+
+\medskip
+\noindent\textbf{Data availability.} All data analysed in this study are
+simulated; they can be regenerated exactly from the configuration file and
+seeds distributed with the code. \TODO{add a DOI (e.g.\ Zenodo/figshare) if the
+simulated datasets are also deposited}
+
+\medskip
+\noindent\textbf{Code availability.} The full pipeline, from data generation
+through to the figures and tables reported in the article, is available at
+\url{https://github.com/Sterrysx/synthetic-clustering}. \TODO{archived release
+with DOI, and the anonymised mirror used for review, e.g.\
+\url{https://anonymous.4open.science/r/XXXX}}
+
+\medskip
+\noindent\textbf{Ethics approval and consent.} Not applicable: the study uses
+only simulated data.
+
+\end{document}

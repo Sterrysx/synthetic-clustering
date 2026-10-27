@@ -1,0 +1,47 @@
+\documentclass[10pt,a4paper]{article}
+\pdfmapfile{=local.map}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,margin=18mm,top=13mm,bottom=12mm]{geometry}
+\usepackage{xcolor}
+\setlength{\parindent}{0pt}\setlength{\parskip}{4pt}
+\pagestyle{empty}
+\renewcommand\labelitemi{$\bullet$}
+\begin{document}
+\textcolor{red}{[Date]}
+
+To: \textcolor{red}{[Name of the Editor / Editor-in-Chief]}, Editor, \emph{Journal of Classification}
+
+Dear \textcolor{red}{[Editor's name]},
+
+We submit our manuscript \textbf{``Cluster Analysis of CART-Synthesised Data: A Factorial Simulation of k-Means and Ward's Linkage''} for consideration as an article in the \emph{Journal of Classification}.
+
+\textbf{What the paper does.} Synthetic data are increasingly released in place of confidential records, but little is known about whether a \emph{cluster analysis} of a synthetic release gives the same answers as the same analysis of the original data. We study this for sequential CART synthesis, the default engine of the R package \emph{synthpop}, in a factorial simulation of 144 scenarios crossing group separation, number of groups, dimensionality, correlation and component distribution (Normal and Gamma), with 720,000 synthetic-versus-original evaluations. We compare \emph{k}-means with Ward's linkage, measure agreement against both the planted structure and the analysis of the original data, and read every result against a bootstrap null: the same analysis applied to bootstrap resamples of the original data, which is the synthesis procedure without the tree step.
+
+\textbf{Main findings.}
+
+\begin{itemize}\setlength{\itemsep}{1pt}\setlength{\topsep}{2pt}
+\item Agreement between the numbers of groups estimated from synthetic and original data is governed by separation (for \emph{k}-means from 0.684 when groups overlap to 0.982 when they are well separated) and depends little on the number of groups. Most of what the planted-truth comparison records as a failure of synthesis is a failure of clustering under overlap. Beyond resampling, CART lowers agreement by 0.032 (\emph{k}-means) and 0.016 (Ward), a small but consistent loss.
+\item For a researcher who clusters a synthetic release, \emph{k}-means reproduces the original number of groups more often than Ward (0.839 versus 0.811; Wilcoxon \emph{p} = 5.4 $\times$ 10$^{-5}$ over the 144 scenarios). This happens on skewed Gamma data (0.809 versus 0.731), not on Normal data (0.869 versus 0.890). The bootstrap null shows that the advantage reflects the greater stability of the \emph{k}-means estimate of \emph{k} under resampling (bootstrap agreement 0.871 versus 0.826), not smaller damage from CART. Against the planted truth the two methods do not differ (0.575 versus 0.579).
+\item Resampling alone reproduces most of the centroid, dispersion and group-balance distortion. CART adds a positive excess in almost every scenario, and this excess is not smaller for \emph{k}-means. In relative terms CART changes within-cluster dispersion by about 2.7 percentage points beyond resampling, and this excess grows rather than shrinks with separation. The silhouette profile is almost unchanged by synthesis, so it would not flag these distortions.
+\item A case study on the Reaven–Miller diabetes data (145 patients) shows the same pattern. Agreement on the number of groups stays close to its resampling reference for both methods (0.629 and 0.632, against 0.667 and 0.637 under resampling), while CART adds distortion to every geometric metric and moves patients between groups: the adjusted Rand index between the original partition and the partition transferred from the synthetic data is 0.856 (\emph{k}-means) and 0.797 (Ward), against 0.922 and 0.837 under resampling.
+\end{itemize}
+
+\textbf{Scope of the claims.} The conclusions hold for one synthesiser (CART with the settings stated in the paper), two clustering algorithms, simulated Normal and Gamma mixtures with equal group sizes and N = 1000, and the silhouette rule for choosing the number of clusters. A replication with ten times as many original datasets per scenario (7,200) leaves every conclusion unchanged and makes the larger loss of \emph{k}-means beyond resampling clear (Wilcoxon \emph{p} = 1.2 $\times$ 10$^{-5}$, against 0.040 in the main design). We do not claim that the results generalise to other synthesisers, to other clustering methods or, beyond the single case study, to real data. The paper frames utility as a property of the combination of data, generator and analysis, to be checked against a resampling reference for each intended use.
+
+\textbf{Fit with the journal.} The paper deals with the recovery and stability of cluster structure and the choice of the number of clusters, topics central to the \emph{Journal of Classification}, and it builds on work published in it (e.g. Hubert and Arabie, 1985; Aschenbruck et al., 2023). It should interest statistical agencies and data holders who evaluate synthetic releases, and analysts who intend to cluster them.
+
+\textbf{Declarations.} The manuscript is original. It has not been published and is not under consideration elsewhere. All five authors have approved the submission. The study extends a bachelor's thesis by one of the authors (Universitat Politècnica de Catalunya, 2025), which is cited in the manuscript (in anonymised form in the version for review); the thesis is not a peer-reviewed publication. \textcolor{red}{[Confirm, and mention any preprint or conference presentation.]} Because the journal uses double-anonymous review, the manuscript and the supplementary material have been anonymised. Author details, funding, competing interests and author contributions are on the separate title page. During review the code is available through an anonymised repository link. The authors have no competing interests to declare. \textcolor{red}{[Optional: suggested or opposed reviewers, if the submission system asks for them.]}
+
+Thank you for considering our manuscript.
+
+Yours sincerely,
+
+\textcolor{red}{[Corresponding author's name]}, on behalf of all authors\\
+\textcolor{red}{[Affiliation, e-mail, postal address, telephone]}
+
+Oriol Farrés Vilar (Department of Computer Science, Universitat Politècnica de Catalunya)\\
+Jordi Cortés (Department of Statistics and Operations Research, and Institute for Research and Innovation in Health (IRIS), Universitat Politècnica de Catalunya)\\
+Xinnuo Chen (Department of Statistical Science, University College London)\\
+Victoria López (CUNEF Universidad, Madrid)\\
+Daniel Fernández (Institute for Research and Innovation in Health (IRIS), Universitat Politècnica de Catalunya)
+\end{document}

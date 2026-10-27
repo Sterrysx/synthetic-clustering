@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Response to co-authors: manuscript v5</title>
+<style>
+body{font-family:Georgia,serif;font-size:9.5px;margin:10mm;line-height:1.25}
+h1{font-size:13px;margin:0 0 3px} h2{font-size:11px;margin:8px 0 3px}
+table{border-collapse:collapse;width:100%} th,td{border:1px solid #999;padding:1.5px 4px;vertical-align:top;text-align:left}
+th{background:#eee} td:first-child{white-space:nowrap;font-weight:bold} ul{margin:2px 0 0 16px;padding:0} p{margin:2px 0}
+@page{size:A4;margin:8mm}
+</style></head><body>
+<h1>Manuscript v5: what was done with your comments</h1>
+<p>Section numbers refer to the v5 main text; S = supplementary material. PDFs: main_named.pdf (to read), main_diff_v4_v5.pdf (changes), main_blind.pdf / supplementary_blind.pdf / title_page.pdf (submission).</p>
+<table><thead><tr><th>ID</th><th>Comment</th><th>What was done</th><th>Where</th></tr></thead>
+<tbody>
+<tr><td>H1</td><td>Headline: k-means vs Ward. Jordi: say that k-means reproduces the number of groups more often, and where; Dani: keep the methodological reason.</td><td>Headline combines both: k-means reproduces the original number of groups more often (0.839 vs 0.811), on Gamma (0.809 vs 0.731) but not Normal (0.869 vs 0.890); the bootstrap null (0.871 vs 0.826) shows this is the stability of k-hat, not smaller CART damage.</td><td>Abstract; 3.6; Discussion (2nd finding); Conclusions</td></tr>
+<tr><td>H2</td><td>Bootstrap floor for each method; keep B = 30.</td><td>Floor and excess at B = 30 for MCD, MVD, &Delta;G, RVD, MCD<sub>sd</sub>; B stated in Methods. Excess not smaller for k-means.</td><td>2.5; 3.4; Table 4; Figs 4-5</td></tr>
+<tr><td>H3</td><td>Compare observed differences with bootstrap differences (difference of differences).</td><td>Excess AG &minus; AG<sub>0</sub> per method; Ward's Gamma penalty shown to be instability already in the null; CART-specific Gamma loss larger for k-means at &sigma; &le; 2.</td><td>3.3; 3.5; Table 3; Fig. 6</td></tr>
+<tr><td>B1</td><td>Anonymise for double-blind review.</td><td>Blind build: author block, GitHub URL, &ldquo;direct access&rdquo; clause and identifying declarations removed; PDF metadata empty; separate title page.</td><td>main_blind.pdf, title_page.pdf</td></tr>
+<tr><td>B2</td><td>Follow JoC format (Springer template, ASA-style references).</td><td>Referee layout (12 pt, double-spaced, single column); JoC reference style (uppercase surnames, initials, full first citation); abstract 135 words; 47 pp.</td><td>build_submission.sh; CHECKLIST.md</td></tr>
+<tr><td>B3</td><td>Appendices to the supplement; stay under 50 pages.</td><td>Appendices A-B are Supplementary S7-S8.</td><td>Supplement S7-S8</td></tr>
+<tr><td>MA1</td><td>Do not compare methods directly: each against its own bootstrap null.</td><td>&ldquo;AG isolates synthesis&rdquo; removed everywhere; AG read against AG<sub>0</sub>.</td><td>2.4-2.5; 3.2-3.3</td></tr>
+<tr><td>MA2</td><td>Report the geometric floor.</td><td>Floor/excess for all metrics in text, Table 4, Tables S5-S6, Figs 4-5.</td><td>3.4; S5</td></tr>
+<tr><td>MA3</td><td>Scale-free metrics.</td><td>RVD, MCD<sub>sd</sub>, MVD/p added; claim that dispersion distortion falls with &sigma; replaced (RVD excess grows).</td><td>2.4; 3.4; Limitations</td></tr>
+<tr><td>MA4</td><td>Fixed range {2,...,8} everywhere.</td><td>Fixed range primary throughout; capped range as sensitivity.</td><td>All of 3; Suppl. S3</td></tr>
+<tr><td>MA5</td><td>Collapse cells: minimal mention.</td><td>One sentence + Table 2 footnote (22/96 and 26/96 scenarios); table in S6.</td><td>3.2; Table 2; S6</td></tr>
+<tr><td>MA6</td><td>Rewrite &rho; and p interpretation.</td><td>&rho; effect read as collapse of k-hat; dimensionality effect at &sigma; = 6 reinstated; &eta;<sup>2</sup> qualified by R<sup>2</sup>.</td><td>3.2</td></tr>
+<tr><td>MA7</td><td>n = 50 / m = 100 rerun: discuss.</td><td>Not done (undecided). Limitations state that tests are across a designed grid.</td><td>Limitations</td></tr>
+<tr><td>MA8</td><td>ARI: defer / clarify.</td><td>Not done (undecided).</td><td>&ndash;</td></tr>
+<tr><td>MA9</td><td>ctree, leaf size: future research.</td><td>In Future work.</td><td>Future work</td></tr>
+<tr><td>MA10</td><td>Gaussian mixtures: future research; fix &ldquo;structurally different&rdquo;.</td><td>Wording fixed; mclust/BIC in Future work.</td><td>1; 4.1; Future work</td></tr>
+<tr><td>MO1</td><td>Funding etc.: at submission.</td><td>Placeholders on the title page.</td><td>title_page.pdf</td></tr>
+<tr><td>MO2</td><td>&ldquo;Fresh sample&rdquo; wording.</td><td>Corrected: centroids redrawn per dataset; pairs baseline secondary.</td><td>S4; 2.3</td></tr>
+<tr><td>MO3</td><td>Tone down Conclusions (with Victoria).</td><td>Five sentences changed, marked % VL-EDIT.</td><td>Conclusions</td></tr>
+<tr><td>MO4</td><td>Privacy metrics: defer.</td><td>Not done (undecided).</td><td>&ndash;</td></tr>
+<tr><td>MO5</td><td>Check cluster-stability literature.</td><td>Stability paragraph with verified references; woo2009 distinguished.</td><td>1; 4.1</td></tr>
+<tr><td>MO6</td><td>Unequal sizes, higher &rho;: defer.</td><td>Claims scoped to the grid; in Future work.</td><td>Limitations; Future work</td></tr>
+<tr><td>MO7</td><td>Small real-data case study.</td><td>Not done (undecided).</td><td>&ndash;</td></tr>
+<tr><td>MI1</td><td>Abstract precision.</td><td>Separate k-means/Ward values.</td><td>Abstract</td></tr>
+<tr><td>MI2</td><td>Small overstatements.</td><td>&ldquo;has closed&rdquo;, silhouette range, Milligan support corrected.</td><td>3.5; 3.6; 2.2</td></tr>
+<tr><td>MI3</td><td>State expected directions.</td><td>Paragraph in Methods.</td><td>2.3</td></tr>
+<tr><td>MI4</td><td>Figure fixes.</td><td>Figs 1-6 redrawn (&le; 4.8 in, 7-8 pt), categorical &sigma; axis, Fig. 6 2&times;2.</td><td>Figs 1-6</td></tr>
+<tr><td>MI5</td><td>Software versions and seeds.</td><td>Versions and seeding stated; independent-seed test not run.</td><td>2.3</td></tr>
+<tr><td>MI6</td><td>Short title.</td><td>New title and keywords.</td><td>Title</td></tr>
+<tr><td>D1-D3</td><td>Author order, affiliations, vidiella2025 year.</td><td>Unchanged as agreed.</td><td>&ndash;</td></tr>
+<tr><td>Check</td><td>Independent number check.</td><td>298 prose numbers and 907 table cells recomputed from the parquet files; 1 mismatch fixed (MVD band 0.05&rarr;0.04), 1 sentence clarified.</td><td>VERIFICATION.md</td></tr>
+</tbody></table>
+<h2>Still to decide</h2>
+<ul><li>Rerun with n = 50 original datasets and m = 100 synthetic datasets per scenario (MA7).</li><li>Adjusted Rand index between original and synthetic partitions (MA8).</li><li>Privacy metrics (exact-match rate, distance to closest record) (MO4).</li><li>Real-data case study (MO7): mclust <code>banknote</code>, or <code>diabetes</code> via rrcov.</li><li>Release of the benchmark package at acceptance (its README still describes the v4 capped range as primary).</li><li>V. L&oacute;pez's approval of the five <code>% VL-EDIT</code> sentences in the Conclusions.</li><li>Anonymous repository mirror for review (placeholder <code>anonymous.4open.science/r/XXXX</code> in the blind PDFs).</li><li>(Added) Whether to keep the third-person citation of the co-author's UPC thesis (Chen, 2025) in the blind version or anonymise it; its reference entry names the university.</li></ul>
+</body></html>

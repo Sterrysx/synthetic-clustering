@@ -268,9 +268,9 @@ with 18 workers, at `m = 1000`:
 | stage | wall time | evidence |
 |---|---|---|
 | synthetic data (144,000 datasets) | 1.24 h | interval over which outputs were written |
-| clustering (720,000 pairs) | ~3.6 h | measured on a random sample of 3,000 inputs, scaled |
+| clustering (720,000 pairs) | ~3.6–4.8 h | two measurements on random samples of 3,000 inputs, scaled (`scripts/checks_v5/time_sample.py`) |
 | fidelity metrics (1.15e7 fits) | 4.44 h | instrumented, direct measurement |
-| **total** | **~9.3 h** | |
+| **total** | **~9.3–10.5 h** | |
 
 Scaling is linear in `m` and in the number of scenarios, and quadratic in `N`.
 At `m = 100` the whole pipeline takes about a tenth as long and reproduces every

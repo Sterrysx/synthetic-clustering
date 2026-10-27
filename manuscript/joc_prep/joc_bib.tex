@@ -17,7 +17,9 @@
 %  this option because sn-joc.bst writes the full author list in \bibitem.
 % =====================================================================
 \usepackage[authoryear,longnamesfirst]{natbib}
-\bibliographystyle{sn-joc}
+% Path relative to manuscript/, where main.tex and supplementary.tex are
+% compiled, so that a plain `bibtex' finds the style without BSTINPUTS.
+\bibliographystyle{joc_prep/sn-joc}
 \makeatletter
 \setlength{\bibsep}{1em}
 \def\bibfont{\reset@font\fontfamily{\rmdefault}\normalsize\selectfont}

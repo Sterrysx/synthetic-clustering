@@ -27,3 +27,23 @@ __pycache__/
 *.pyc
 .uv-cache/
 .pytest_cache/
+
+# Local Git worktrees
+.worktrees/
+
+# case study: synthetic draws and per-draw metrics are regenerable in ~1 min
+# (scripts/case_study/); the original data, summaries and info files are kept.
+results/case_study/diabetes_synthetic*.csv
+results/case_study/diabetes_draws*.csv
+# root-level copies of the submission builds (the deliverables are in manuscript/submission/)
+manuscript/main_blind.pdf
+manuscript/main_named.pdf
+manuscript/supplementary_blind.pdf
+manuscript/supplementary_named.pdf
+manuscript/title_page.pdf
+manuscript/main_diff_v4_v5.pdf
+manuscript/cover_letter.pdf
+manuscript/main_diff_v4_v5.tex
+manuscript/*.bibtex.log
+manuscript/*.latexdiff.log
+manuscript/pdflatex.fmt

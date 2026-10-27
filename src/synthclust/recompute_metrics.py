@@ -19,7 +19,8 @@ starting over.
        khat_*_full   argmax over k in 2..8              (symmetric search)
        khat_*_capped argmax over k in 2..min(k_true+3,8) (the original pipeline's rule)
   * The original-data partition is computed ONCE per (replicate, algorithm)
-    and reused across all 100 draws, instead of being refitted per draw.
+    and reused across all draws of that replicate (1000 in the main run,
+    100 in the m = 100 run), instead of being refitted per draw.
 
 Scaling convention: the StandardScaler is fit on the original data and applied
 unchanged to the synthetic data, so MCD and MVD are expressed in a single
